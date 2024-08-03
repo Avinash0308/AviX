@@ -7,7 +7,7 @@ export const incrementApiLimit = async () => {
   const { userId } = auth();
 
   if (!userId) {
-    return;
+    return false;
   }
 
   const userApiLimit = await prismadb.userApiLimit.findUnique({

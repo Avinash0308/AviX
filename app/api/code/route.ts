@@ -52,7 +52,7 @@ export async function POST(
     // });
     const model = genAI.getGenerativeModel({ model: "gemini-pro"});
     const result = await model.generateContent(instructionMessage + " " +  messages);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
     if (!isPro) {
       await incrementApiLimit();

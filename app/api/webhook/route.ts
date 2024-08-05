@@ -5,6 +5,8 @@ import { NextResponse } from "next/server"
 import prismadb from "@/lib/prismadb"
 import { stripe } from "@/lib/stripe"
 
+export const dynamic = "force-dynamic"
+
 export async function POST(req: Request) {
   const body = await req.text()
   const signature = headers().get("Stripe-Signature") as string

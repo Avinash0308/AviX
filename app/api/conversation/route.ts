@@ -48,7 +48,7 @@ export async function POST(
   // const prompt = "Write a story about a magic backpack."
 
   const result = await model.generateContent(messages);
-  const response = await result.response;
+  const response = result.response;
   
   const text = response.text();
   const formattedResponse = marked(text)

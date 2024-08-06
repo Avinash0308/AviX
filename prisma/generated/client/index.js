@@ -131,7 +131,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "c:\\Users\\tulsi\\Desktop\\Programming\\GitHub Repos\\AviX\\AviX\\prisma\\generated\\client",
+      "value": "C:\\Users\\tulsi\\Desktop\\Programming\\GitHub Repos\\AviX\\AviX\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -145,7 +145,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "c:\\Users\\tulsi\\Desktop\\Programming\\GitHub Repos\\AviX\\AviX\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\tulsi\\Desktop\\Programming\\GitHub Repos\\AviX\\AviX\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

@@ -4,7 +4,7 @@ import { LandingContent } from "@/components/landing-content";
 
 const LandingPage = () => {
   return ( 
-    <div className="h-full bg-[url('/blur.png')] bg-opacity-50 bg-cover bg-center">
+    <div className="h-full bg-[url('/fin.jpg')] bg-opacity-80 bg-center">
       <LandingNavbar />
       <LandingHero />
       <LandingContent />

@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     };
 
     const output = await replicate.run(
-      "fofr/latent-consistency-model:a83d4056c205f4f62ae2d19f73b04881db59ce8b81154d314dd34ab7babaa0f1",
+      "aleksa-codes/flux-ghibsky-illustration:a9f94946fa0377091ac0bcfe61b0d62ad9a85224e4b421b677d4747914b908c0",
       { input }
     );
 

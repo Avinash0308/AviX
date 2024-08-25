@@ -2,9 +2,9 @@
 Genius is a state-of-art SaaS (Software as a Service) platform developed using five AI Tools.
 Genius can be used as a daily tool that can ease your life with its various and crazy functionalities.
 
-**Project Link:** 
+**Project Demo Link:** https://youtu.be/oM1PlYCPZS8
 
-**Project Demo Link:** 
+**Project Link:** https://avix-pink.vercel.app/ [Not Fully Functioning]
 
 <br>
 
@@ -83,5 +83,35 @@ Followinng technologies are used to built Tumin:
 ![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Payment.png)
 
 <br>
+
+## Prerequisites
+
+### Install Node JS
+Refer to https://nodejs.org/en/ to install nodejs
+
+### Install create-react-app
+Install create-react-app npm package globally. This will help to easily run the project and also build the source files easily. Use the following command to install create-react-app
+
+```bash
+npm install -g create-react-app
+```
+
+## Cloning and Running the Application in local
+
+Clone the project into local
+
+Install all the npm packages. Go into the project folder and type the following command to install all npm packages
+
+```bash
+npm install
+```
+
+In order to run the application Type the following command
+
+```bash
+npm run dev
+```
+
+The Application Runs on **localhost:3000**
 
 # Thanks💖

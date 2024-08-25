@@ -47,7 +47,7 @@ Followinng technologies are used to built Tumin:
 ## Snapshots of Genius.AI:
 
 ### Home Page
-![image](AviX/ReadMe_Images/HomePage.png)
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/HomePage.png)
 
 ### Statictics Page
 ![image](https://i.ibb.co/RzMjr26/Screenshot-2024-01-07-015440.png)

@@ -48,43 +48,39 @@ Followinng technologies are used to built Tumin:
 
 ### Home Page
 ![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/HomePage.png)
-
-### Statictics Page
-![image](https://i.ibb.co/RzMjr26/Screenshot-2024-01-07-015440.png)
-
-### Our Services
-![image](https://i.ibb.co/TLbc6F9/Screenshot-2024-01-07-015515.png)
-
-### Connected Hospitals
-![image](https://i.ibb.co/RNXTXXK/Screenshot-2024-01-07-015606.png)
-
-### Schemes Page
-![image](https://i.ibb.co/YjWcXMv/Screenshot-156.png)
-
 <br>
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Testimonials.png)
 
-![image](https://i.ibb.co/rF1d1qg/Screenshot-157.png)
+### User Authentication
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/UserAuthentication.png)
 
-### Appointment Page
-![image](https://i.ibb.co/LSnv1Kt/Screenshot-2024-01-07-015825.png)
+### Dashboard
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Dashboard.png)
 
-### Personal Data
-![image](https://i.ibb.co/sbBMvcx/Screenshot-2024-01-07-015720.png)
+### Conversation Feature
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Conversation.png)
 
-### Testimonial Page
-![image](https://i.ibb.co/xqsJgCk/Screenshot-2024-01-07-015644.png)
+### Image Generation
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Image.png)
 
-### Avinashak - Chat Bot
-![image](https://i.ibb.co/KxtYgT7/Screenshot-161.png)
+### Video Generation
 
-### Registration Form
-![image](https://i.ibb.co/fd3t0qf/Screenshot-2024-01-07-015916.png)
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Video.png)
 
-### Footer 
-![image](https://i.ibb.co/Bs6wRww/Screenshot-2024-01-07-015745.png)
+### Music Generation
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Music.png)
 
-### Index page 
-![image](https://i.ibb.co/Q6Q8MhW/Screenshot-160.png)
+### Code Generation
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Code.png)
+
+### User Account
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Account.png)
+
+### Upgrade Pop-Up
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Upgrade.png)
+
+### Payment Gateway
+![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Payment.png)
 
 <br>
 

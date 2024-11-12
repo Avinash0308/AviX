@@ -17,7 +17,7 @@ module.exports = {
         protocol: 'https',
         hostname: 'replicate.delivery',
         port: '',
-        pathname: '/yhqm/**',
+        pathname: '/xezq/**',
       },
     ],
   },

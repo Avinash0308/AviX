@@ -41,6 +41,18 @@ export async function POST(
       }
     );
 
+    // const input = {
+    //   prompt: String(prompt),
+    //   model_version: "stereo-large",
+    //   duration: 10,
+    //   normalization_strategy: "peak",
+    //   output_format: "wav",
+    // };
+
+    // const response = await replicate.run(
+    //   "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb", { input }
+    // );
+
     if (!isPro) {
       await incrementApiLimit();
     }

@@ -47,7 +47,6 @@ export async function POST(req: Request) {
       height: Number(height),
       prompt: String(prompt),
       num_outputs: Number(num_outputs),
-      scheduler: "K_EULER",
     };
 
     const output = await replicate.run(

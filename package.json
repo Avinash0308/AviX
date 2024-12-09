@@ -10,7 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.2.11",
+    "@clerk/nextjs": "^6.8.0",
     "@google/generative-ai": "^0.5.0",
     "@hookform/resolvers": "^3.1.1",
     "@prisma/client": "^5.17.0",
@@ -25,6 +25,7 @@
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "array": "^0.4.3",
     "autoprefixer": "10.4.14",
     "avatar": "^0.1.0",
     "axios": "^1.6.8",
@@ -35,9 +36,10 @@
     "dotenv": "^16.4.5",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",
+    "export": "^0.1.337",
     "lucide-react": "^0.259.0",
     "marked": "^12.0.1",
-    "next": "^14.2.5",
+    "next": "^14.2.20",
     "next-themes": "^0.2.1",
     "openai": "^4.6.0",
     "postcss": "8.4.25",

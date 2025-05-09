@@ -6,6 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
 
 const settingsUrl = absoluteUrl("/settings");
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export async function GET() {
   try {
@@ -32,8 +33,8 @@ export async function GET() {
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
-      success_url: "http://localhost:3000/settings",
-      cancel_url: "http://localhost:3000/settings",
+      success_url: `${baseUrl}/settings`,
+      cancel_url: `${baseUrl}/settings`,
       payment_method_types: ["card"],
       mode: "subscription",
       billing_address_collection: "auto",

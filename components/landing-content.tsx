@@ -153,7 +153,7 @@ export const LandingContent = () => {
   ];
 
   return (
-    <div className="space-y-28 md:space-y-36 pb-20">
+    <div className="space-y-20 md:space-y-28">
       {/* SECTION 1: WHAT IS GENIUS.AI? (THE CORE VALUE STORY) */}
       <section id="capabilities" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
@@ -612,8 +612,8 @@ export const LandingContent = () => {
       <FluidCtaBanner isSignedIn={!!isSignedIn} />
 
       {/* SECTION 8: MODERN FOOTER */}
-      <footer className="border-t border-black/5 dark:border-white/10 py-8 sm:py-10 text-xs text-muted-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-4 text-center sm:text-left">
+      <footer className="!mt-12 sm:!mt-16 border-t border-black/5 dark:border-white/10 py-6 sm:py-8 text-xs text-muted-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <Link href="/" className="font-bold text-foreground hover:text-primary transition">Genius.ai</Link>
             <span>•</span>

@@ -612,9 +612,9 @@ export const LandingContent = () => {
       <FluidCtaBanner isSignedIn={!!isSignedIn} />
 
       {/* SECTION 8: MODERN FOOTER */}
-      <footer className="border-t border-black/5 dark:border-white/10 pt-10 text-xs text-muted-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+      <footer className="border-t border-black/5 dark:border-white/10 py-8 sm:py-10 text-xs text-muted-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-4 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <Link href="/" className="font-bold text-foreground hover:text-primary transition">Genius.ai</Link>
             <span>•</span>
             <span>
@@ -630,17 +630,17 @@ export const LandingContent = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-6">
-            <a href="#capabilities" className="hover:text-foreground transition">Capabilities</a>
-            <a href="#preview" className="hover:text-foreground transition">Live Preview</a>
-            <a href="#pricing" className="hover:text-foreground transition">Pricing</a>
-            <a href="#faq" className="hover:text-foreground transition">FAQ</a>
-            <Link href={isSignedIn ? "/dashboard" : "/sign-in"} className="hover:text-foreground transition font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 sm:gap-x-6 gap-y-2">
+            <a href="#capabilities" className="hover:text-foreground transition whitespace-nowrap">Capabilities</a>
+            <a href="#preview" className="hover:text-foreground transition whitespace-nowrap">Live Preview</a>
+            <a href="#pricing" className="hover:text-foreground transition whitespace-nowrap">Pricing</a>
+            <a href="#faq" className="hover:text-foreground transition whitespace-nowrap">FAQ</a>
+            <Link href={isSignedIn ? "/dashboard" : "/sign-in"} className="hover:text-foreground transition font-medium whitespace-nowrap">
               Sign In
             </Link>
           </div>
 
-          <p className="text-muted-foreground/80">
+          <p className="text-muted-foreground/80 text-center sm:text-right">
             © {new Date().getFullYear()} Genius.ai. All rights reserved.
           </p>
         </div>

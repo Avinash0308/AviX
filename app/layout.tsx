@@ -4,15 +4,15 @@ import { ClerkProvider } from '@clerk/nextjs'
 
 import { ToasterProvider } from '@/components/toaster-provider'
 import { ModalProvider } from '@/components/modal-provider'
-import { CrispProvider } from '@/components/crisp-provider'
+import { ThemeProvider } from '@/components/theme-provider'
 
 import './globals.css'
 
 const font = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Genius.AI',
-  description: 'AI Platform',
+  title: 'Genius.ai | The All-in-One AI Studio',
+  description: 'Generate conversations, code, images, audio, and video in one unified, next-gen AI workspace.',
 }
 
 export default async function RootLayout({
@@ -23,11 +23,12 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <CrispProvider />
         <body className={font.className}>
-          <ToasterProvider />
-          <ModalProvider />
-          {children}
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            <ToasterProvider />
+            <ModalProvider />
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

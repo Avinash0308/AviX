@@ -5,7 +5,7 @@ import Replicate from "replicate";
 import { checkSubscription } from "@/lib/subscription";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN!,
+  auth: process.env.REPLICATE_API_TOKEN || "token_placeholder",
 });
 export async function POST(req: Request) {
   try {

@@ -144,10 +144,10 @@ html {
   overflow: hidden;
 }
 
-/* Modern sleek custom scrollbars */
+/* Modern auto-hiding custom scrollbars: invisible by default, appears only when scrolling / moving the page */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -155,12 +155,41 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.2);
+  background: transparent;
   border-radius: 9999px;
+  transition: background-color 0.4s ease;
 }
 
+/* Scrollbar thumb appears when moving/scrolling or hovered */
+.is-scrolling::-webkit-scrollbar-thumb,
+body.is-scrolling *::-webkit-scrollbar-thumb,
+body.is-scrolling::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.4);
+  background: rgba(150, 150, 150, 0.35);
+}
+
+.dark .is-scrolling::-webkit-scrollbar-thumb,
+.dark body.is-scrolling *::-webkit-scrollbar-thumb,
+.dark body.is-scrolling::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 200, 200, 0.28);
+}
+
+/* Firefox standard auto-hiding scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.4s ease;
+}
+
+.is-scrolling,
+body.is-scrolling * {
+  scrollbar-color: rgba(150, 150, 150, 0.35) transparent;
+}
+
+.dark.is-scrolling,
+.dark body.is-scrolling * {
+  scrollbar-color: rgba(200, 200, 200, 0.28) transparent;
 }
 
 .no-scrollbar::-webkit-scrollbar {

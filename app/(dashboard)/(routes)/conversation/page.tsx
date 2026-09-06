@@ -119,19 +119,28 @@ const ConversationPage = () => {
             <Empty label="No conversation started." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div 
-                key={message.content} 
-                className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  message.role === "user" ? "bg-white border border-black/10" : "bg-muted",
-                )}
-              >
-                
-                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                  <div dangerouslySetInnerHTML={{ __html: message.content }} />
-              </div>  
-            ))}
+            {messages.map((message) => {
+              const isUser = message.role === "user";
+              return (
+                <div key={message.content} className={cn("w-full flex", isUser ? "justify-end" : "justify-start")}>
+                  <div className={cn("flex items-start gap-3 max-w-[85%]", isUser && "flex-row-reverse")}>
+                    <div className="flex-shrink-0 mt-1">
+                      {isUser ? <UserAvatar /> : <BotAvatar />}
+                    </div>
+                    <div
+                      className={cn(
+                        "p-4 md:p-5 rounded-2xl w-fit max-w-full shadow-sm",
+                        isUser
+                          ? "bg-violet-600/10 dark:bg-violet-500/20 border border-violet-500/25 rounded-tr-xs"
+                          : "bg-muted dark:bg-zinc-900/90 border border-border/80 rounded-tl-xs"
+                      )}
+                    >
+                      <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

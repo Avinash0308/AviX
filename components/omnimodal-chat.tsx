@@ -51,8 +51,28 @@ export const OmnimodalChat = () => {
   const [loadingStatus, setLoadingStatus] = useState("Genius.ai is thinking...");
   const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
   const [placeholderText, setPlaceholderText] = useState("Ask anything or create media...");
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const newlyCreatedChatIdRef = useRef<string | null>(null);
   const currentChatIdRef = useRef<string | null | undefined>(activeChatId);
+
+  const handleScroll = useCallback(() => {
+    setIsScrolling(true);
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+    scrollTimerRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const updatePlaceholder = () => {
@@ -553,8 +573,10 @@ export const OmnimodalChat = () => {
 
       {/* Main Message Stream */}
       <div
+        onScroll={handleScroll}
         className={cn(
-          "flex-1 min-h-0 pr-1",
+          "flex-1 min-h-0 pl-1 pr-3 sm:pr-4 md:pr-6",
+          isScrolling && "is-scrolling",
           messages.length > 0
             ? "overflow-y-auto py-2 space-y-4"
             : "overflow-y-auto no-scrollbar flex flex-col justify-start md:justify-center py-2"
@@ -575,15 +597,17 @@ export const OmnimodalChat = () => {
 
         {/* Dynamic Loading State Card */}
         {!isLoadingChat && isLoading && (
-          <div className="flex gap-3 md:gap-4 p-4 md:p-6 rounded-2xl bg-background border border-border/60 shadow-sm mr-6 md:mr-16 animate-pulse">
-            <div className="flex-shrink-0">
-              <BotAvatar />
-            </div>
-            <div className="flex-1 flex items-center gap-3">
-              <Loader2 className="w-4 h-4 text-violet-500 animate-spin" />
-              <span className="text-xs md:text-sm font-medium text-muted-foreground">
-                {loadingStatus}
-              </span>
+          <div className="w-full flex justify-start">
+            <div className="flex items-start gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[85%]">
+              <div className="flex-shrink-0 mt-0.5">
+                <BotAvatar />
+              </div>
+              <div className="w-fit flex items-center gap-3 px-4 py-3 rounded-2xl rounded-tl-xs bg-card dark:bg-zinc-900/90 border border-border/80 shadow-sm animate-pulse">
+                <Loader2 className="w-4 h-4 text-violet-500 animate-spin shrink-0" />
+                <span className="text-xs md:text-sm font-medium text-muted-foreground">
+                  {loadingStatus}
+                </span>
+              </div>
             </div>
           </div>
         )}

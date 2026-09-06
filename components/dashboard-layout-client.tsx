@@ -60,8 +60,21 @@ export const DashboardLayoutClient = ({
       setIsCollapsed(savedCollapsed === "true");
     }
 
+    let scrollTimer: NodeJS.Timeout;
+    const handleGlobalScroll = () => {
+      document.body.classList.add("is-scrolling");
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        document.body.classList.remove("is-scrolling");
+      }, 1000);
+    };
+
+    window.addEventListener("scroll", handleGlobalScroll, { passive: true, capture: true });
+
     return () => {
       window.removeEventListener("resize", checkMobile);
+      window.removeEventListener("scroll", handleGlobalScroll, { capture: true });
+      clearTimeout(scrollTimer);
     };
   }, []);
 

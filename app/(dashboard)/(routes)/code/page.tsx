@@ -120,40 +120,52 @@ const CodePage = () => {
             <Empty label="No conversation started." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div 
-                key={message.content} 
-                className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  message.role === "user" ? "bg-white border border-black/10" : "bg-muted",
-                )}
-              >
-                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <ReactMarkdown components={{
-                  pre: ({ node, ...props }) => (
-                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                      <pre {...props} />
+            {messages.map((message) => {
+              const isUser = message.role === "user";
+              return (
+                <div key={message.content} className={cn("w-full flex", isUser ? "justify-end" : "justify-start")}>
+                  <div className={cn("flex items-start gap-3 max-w-[90%]", isUser && "flex-row-reverse")}>
+                    <div className="flex-shrink-0 mt-1">
+                      {isUser ? <UserAvatar /> : <BotAvatar />}
                     </div>
-                  ),
-                  code: ({ node, ...props }) => (
-                    <code className="bg-black/10 rounded-lg p-1" {...props} />
-                  )
-                }} className="text-sm overflow-hidden leading-7">
-                   {Array.isArray(message.content)
-                  ? message.content
-                      .map((part, partIndex) => {
-                        if ("text" in part) {
-                          return <span key={partIndex}>{part.text}</span>;
-                        } else {
-                          // Handle 'ChatCompletionContentPartImage' case here
-                          return null;
-                        }
-                      })
-                      .join("")
-                  : message.content || ""}
-                </ReactMarkdown>
-              </div>
-            ))}
+                    <div
+                      className={cn(
+                        "p-4 md:p-5 rounded-2xl w-fit max-w-full shadow-sm",
+                        isUser
+                          ? "bg-violet-600/10 dark:bg-violet-500/20 border border-violet-500/25 rounded-tr-xs"
+                          : "bg-muted dark:bg-zinc-900/90 border border-border/80 rounded-tl-xs"
+                      )}
+                    >
+                      <ReactMarkdown
+                        components={{
+                          pre: ({ node, ...props }) => (
+                            <div className="overflow-auto w-full my-2 bg-black/10 dark:bg-zinc-950 p-2 rounded-lg">
+                              <pre {...props} />
+                            </div>
+                          ),
+                          code: ({ node, ...props }) => (
+                            <code className="bg-black/10 dark:bg-zinc-800 rounded-lg p-1" {...props} />
+                          ),
+                        }}
+                        className="text-sm overflow-hidden leading-7"
+                      >
+                        {Array.isArray(message.content)
+                          ? message.content
+                              .map((part, partIndex) => {
+                                if ("text" in part) {
+                                  return <span key={partIndex}>{part.text}</span>;
+                                } else {
+                                  return null;
+                                }
+                              })
+                              .join("")
+                          : message.content || ""}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

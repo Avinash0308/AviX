@@ -21,7 +21,20 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      localization={{
+        signIn: {
+          start: {
+            title: "Sign in to Genius.ai",
+          },
+        },
+        signUp: {
+          start: {
+            title: "Sign up to Genius.ai",
+          },
+        },
+      }}
+    >
       <html lang="en" suppressHydrationWarning>
         <body className={font.className}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

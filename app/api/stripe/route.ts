@@ -33,7 +33,7 @@ export async function GET() {
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
-      success_url: `${baseUrl}/settings`,
+      success_url: `${baseUrl}/settings?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/settings`,
       payment_method_types: ["card"],
       mode: "subscription",
@@ -42,12 +42,12 @@ export async function GET() {
       line_items: [
         {
           price_data: {
-            currency: "INR",
+            currency: "USD",
             product_data: {
-              name: "NEX Pro",
+              name: "Genius.ai Pro",
               description: "Unlimited AI Generations"
             },
-            unit_amount: 19900,
+            unit_amount: 2000,
             recurring: {
               interval: "month"
             }

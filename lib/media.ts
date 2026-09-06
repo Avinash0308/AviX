@@ -1,4 +1,5 @@
 import Replicate from "replicate";
+import { persistMedia } from "./media-storage";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN || "",
@@ -44,8 +45,13 @@ export async function generateImageWithFallback(
       }
     );
 
+    const persistentUrl = await persistMedia(
+      Array.isArray(output) ? output : [output],
+      "image"
+    );
+
     return {
-      url: Array.isArray(output) ? output : [output],
+      url: persistentUrl,
       modelUsed: "black-forest-labs/flux-schnell",
     };
   } catch (fluxError: any) {
@@ -69,8 +75,13 @@ export async function generateImageWithFallback(
       }
     );
 
+    const persistentUrl = await persistMedia(
+      Array.isArray(output) ? output : [output],
+      "image"
+    );
+
     return {
-      url: Array.isArray(output) ? output : [output],
+      url: persistentUrl,
       modelUsed: "stability-ai/sdxl",
     };
   } catch (sdxlError: any) {
@@ -111,9 +122,10 @@ export async function generateMusicWithFallback(
     );
 
     const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
+    const persistentAudio = await persistMedia(audioUrl, "audio");
 
     return {
-      url: audioUrl,
+      url: persistentAudio,
       modelUsed: "meta/musicgen",
       duration,
     };
@@ -138,9 +150,10 @@ export async function generateMusicWithFallback(
     );
 
     const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
+    const persistentAudio = await persistMedia(audioUrl, "audio");
 
     return {
-      url: audioUrl,
+      url: persistentAudio,
       modelUsed: "riffusion/riffusion",
       duration: 8,
     };
@@ -184,9 +197,10 @@ export async function generateVideo(
     );
 
     const videoUrl = typeof output === "string" ? output : Array.isArray(output) ? output[0] : output;
+    const persistentVideo = await persistMedia(videoUrl, "video");
 
     return {
-      url: videoUrl,
+      url: persistentVideo,
       modelUsed: "lightricks/ltx-video",
       duration: 4,
     };

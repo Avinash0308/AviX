@@ -51,22 +51,22 @@ export const ProModal = () => {
           </DialogTitle>
           <DialogDescription className="text-center pt-2 space-y-2 text-zinc-900 font-medium">
             {tools.map((tool) => (
-              <Card key={tool.href} className="p-3 border-black/5 flex items-center justify-between">
-                <div className="flex items-center gap-x-4">
-                  <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
-                    <tool.icon className={cn("w-6 h-6", tool.color)} />
+              <Card key={tool.href} className="p-2.5 sm:p-3 border-black/5 flex items-center justify-between rounded-xl">
+                <div className="flex items-center gap-x-3 sm:gap-x-4">
+                  <div className={cn("p-1.5 sm:p-2 w-fit rounded-lg", tool.bgColor)}>
+                    <tool.icon className={cn("w-5 h-5 sm:w-6 sm:h-6", tool.color)} />
                   </div>
-                  <div className="font-semibold text-sm">
+                  <div className="font-semibold text-xs sm:text-sm">
                     {tool.label}
                   </div>
                 </div>
-                <Check className="text-primary w-5 h-5" />
+                <Check className="text-primary w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
               </Card>
             ))}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <Button disabled={loading} onClick={onSubscribe} size="lg" variant="premium" className="w-full">
+        <DialogFooter className="pt-2">
+          <Button disabled={loading} onClick={onSubscribe} size="lg" variant="premium" className="w-full rounded-xl">
             Upgrade
             <Zap className="w-4 h-4 ml-2 fill-white" />
           </Button>

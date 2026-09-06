@@ -68,11 +68,12 @@ export const OmnimodalEmpty = ({ onSelectPrompt }: OmnimodalEmptyProps) => {
         </div>
       </div>
 
-      <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold tracking-tight mb-1.5 sm:mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 shrink-0">
+      <h2 className="text-lg sm:text-2xl md:text-4xl font-extrabold tracking-tight mb-1.5 sm:mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 shrink-0">
         What would you like to create?
       </h2>
       <p className="text-muted-foreground text-xs sm:text-sm md:text-base max-w-lg mb-4 sm:mb-8 shrink-0">
-        Converse freely, write production code, render real-life photos, compose music, or create cinematic videos—all in this single conversation.
+        <span className="sm:hidden">Chat, write code, create images, music & video.</span>
+        <span className="hidden sm:inline">Converse freely, write production code, render real-life photos, compose music, or create cinematic videos—all in this single conversation.</span>
       </p>
 
       {/* Suggestion Cards Grid */}

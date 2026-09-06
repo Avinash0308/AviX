@@ -48,10 +48,24 @@ export const OmnimodalChat = () => {
   const [editingTitleText, setEditingTitleText] = useState("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
   const [loadingStatus, setLoadingStatus] = useState("Genius.ai is thinking...");
-
+  const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
+  const [placeholderText, setPlaceholderText] = useState("Ask anything or create media...");
+  const newlyCreatedChatIdRef = useRef<string | null>(null);
   const currentChatIdRef = useRef<string | null | undefined>(activeChatId);
+
+  useEffect(() => {
+    const updatePlaceholder = () => {
+      if (typeof window !== "undefined" && window.innerWidth >= 640) {
+        setPlaceholderText("Ask anything, write code, or create images, music & video...");
+      } else {
+        setPlaceholderText("Ask anything or create media...");
+      }
+    };
+    updatePlaceholder();
+    window.addEventListener("resize", updatePlaceholder);
+    return () => window.removeEventListener("resize", updatePlaceholder);
+  }, []);
 
   useEffect(() => {
     currentChatIdRef.current = activeChatId;
@@ -59,6 +73,13 @@ export const OmnimodalChat = () => {
 
   // Load conversation messages when activeChatId changes
   useEffect(() => {
+    // If this conversation was just initiated in the current view, do not wipe messages or fetch from server
+    if (activeChatId && newlyCreatedChatIdRef.current === activeChatId) {
+      newlyCreatedChatIdRef.current = null;
+      setIsLoadingChat(false);
+      return;
+    }
+
     // 1. Check if the newly active chat has a task currently generating in the background
     const runningTask = activeChatId
       ? useGenerationStore.getState().activeTasks[activeChatId]
@@ -83,6 +104,13 @@ export const OmnimodalChat = () => {
       return;
     }
 
+    // If generation is actively in progress, message is already in state and server hasn't finished yet.
+    // Do NOT make a premature GET request that would 404.
+    if (runningTask) {
+      setIsLoadingChat(false);
+      return;
+    }
+
     const abortController = new AbortController();
     setIsLoadingChat(true);
 
@@ -97,21 +125,7 @@ export const OmnimodalChat = () => {
             setChatTitle(response.data.title);
           }
           if (response.data.messages) {
-            const fetched = response.data.messages as ChatMessage[];
-            // If there's an active generation running for this chat, ensure the user message remains displayed
-            const currentRunning = useGenerationStore.getState().activeTasks[activeChatId];
-            if (currentRunning) {
-              const hasUserMsg = fetched.some(
-                (m) =>
-                  m.role === "user" &&
-                  m.content.trim() === currentRunning.userMessage.content.trim()
-              );
-              setMessages(hasUserMsg ? fetched : [...fetched, currentRunning.userMessage]);
-              setIsLoading(true);
-              setLoadingStatus(currentRunning.loadingStatus);
-            } else {
-              setMessages(fetched);
-            }
+            setMessages(response.data.messages as ChatMessage[]);
           }
         }
       })
@@ -121,6 +135,11 @@ export const OmnimodalChat = () => {
         }
         if (currentChatIdRef.current === activeChatId) {
           console.error("[LOAD_CHAT_ERROR]", error);
+          if (error?.response?.status === 404) {
+            // Chat does not exist or was deleted, smoothly reset to clean /chat
+            router.replace("/chat");
+            return;
+          }
           toast.error("Could not load chat.");
         }
       })
@@ -133,7 +152,7 @@ export const OmnimodalChat = () => {
     return () => {
       abortController.abort();
     };
-  }, [activeChatId]);
+  }, [activeChatId, router]);
 
   // Listen for global background task completion/failure
   useEffect(() => {
@@ -364,9 +383,9 @@ export const OmnimodalChat = () => {
     }
     setIsLoading(true);
 
-    // If starting from a new conversation, update URL immediately so this chat has a solid ID
+    // If starting from a new conversation, track that it was initiated locally
     if (!activeChatId) {
-      router.push(`/chat?id=${targetChatId}`);
+      newlyCreatedChatIdRef.current = targetChatId;
       currentChatIdRef.current = targetChatId;
     }
 
@@ -392,6 +411,11 @@ export const OmnimodalChat = () => {
       onProModal: () => proModal.onOpen(),
       onError: (msg) => toast.error(msg),
     });
+
+    // Update URL so this chat has a solid ID
+    if (!activeChatId) {
+      router.push(`/chat?id=${targetChatId}`);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -581,18 +605,17 @@ export const OmnimodalChat = () => {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
-            placeholder="Ask anything, write code, or create images, music & video..."
-            className="flex-1 max-h-44 resize-none bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none leading-relaxed"
+            placeholder={placeholderText}
+            className="flex-1 max-h-44 resize-none bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/70 placeholder:truncate focus:outline-none leading-relaxed"
           />
 
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${
-              !input.trim() || isLoading
+            className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${!input.trim() || isLoading
                 ? "bg-secondary text-muted-foreground cursor-not-allowed opacity-50"
                 : "bg-gradient-to-tr from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-md shadow-violet-500/30 cursor-pointer hover:scale-105 active:scale-95"
-            }`}
+              }`}
             title="Send prompt"
           >
             {isLoading ? (

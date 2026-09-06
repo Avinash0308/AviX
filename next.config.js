@@ -16,8 +16,18 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'replicate.delivery',
-        port: '',
-        pathname: '/xezq/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.clerk.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
       },
     ],
   },

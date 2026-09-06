@@ -5,6 +5,11 @@ import prismadb from "@/lib/prismadb";
 const DAY_IN_MS = 86_400_000;
 
 export const checkSubscription = async () => {
+  // Development toggle to test Pro features without active Stripe webhook
+  if (process.env.DEV_FORCE_PRO === "true" || process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true") {
+    return true;
+  }
+
   const { userId } = await auth();
 
   if (!userId) {

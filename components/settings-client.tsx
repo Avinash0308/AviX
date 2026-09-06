@@ -19,6 +19,8 @@ import {
   ExternalLink,
   Cpu,
   Loader2,
+  Calendar,
+  Clock,
 } from "lucide-react";
 
 import { Heading } from "@/components/heading";
@@ -33,12 +35,16 @@ interface SettingsClientProps {
   isPro: boolean;
   apiLimitCount: number;
   maxFreeCounts: number;
+  subscriptionExpiryDate?: string | null;
+  isCanceled?: boolean;
 }
 
 export const SettingsClient = ({
   isPro = false,
   apiLimitCount = 0,
   maxFreeCounts = 20,
+  subscriptionExpiryDate = null,
+  isCanceled = false,
 }: SettingsClientProps) => {
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
@@ -88,6 +94,24 @@ export const SettingsClient = ({
 
   const usagePercent = Math.min((apiLimitCount / maxFreeCounts) * 100, 100);
 
+  const formattedExpiryDate = subscriptionExpiryDate
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(subscriptionExpiryDate))
+    : null;
+
+  const daysRemaining = subscriptionExpiryDate
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(subscriptionExpiryDate).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24)
+        )
+      )
+    : null;
+
   return (
     <div className="h-full overflow-y-auto pt-6 sm:pt-8 pb-12">
       <div className="max-w-5xl mx-auto">
@@ -130,6 +154,32 @@ export const SettingsClient = ({
                   ? "You have full, unlimited access to all multimodal AI models."
                   : `You are on the free tier with a limit of ${maxFreeCounts} generations.`}
               </p>
+
+              {/* Pro Subscription Expiry Pill */}
+              {isPro && formattedExpiryDate && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/10 dark:bg-violet-500/15 border border-violet-500/20 text-xs text-foreground">
+                    <Calendar className="w-3.5 h-3.5 text-violet-500 shrink-0" />
+                    <span>
+                      {isCanceled
+                        ? "Subscription ends on: "
+                        : "Expiry / Next renewal: "}
+                      <strong className="text-foreground font-semibold">
+                        {formattedExpiryDate}
+                      </strong>
+                    </span>
+                  </div>
+                  {daysRemaining !== null && (
+                    <span className="text-[11px] font-medium text-muted-foreground bg-secondary/80 px-2.5 py-1 rounded-lg border border-border/50">
+                      {daysRemaining === 0
+                        ? "Expires today"
+                        : daysRemaining === 1
+                        ? "1 day remaining"
+                        : `${daysRemaining} days remaining`}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="shrink-0">
@@ -137,8 +187,28 @@ export const SettingsClient = ({
             </div>
           </div>
 
-          {/* Usage Meter */}
+          {/* Usage Meter & Subscription Details */}
           <div className="pt-5 space-y-3">
+            {/* Expiry Details Banner for Pro Users */}
+            {isPro && formattedExpiryDate && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-secondary/40 border border-border/50 text-xs sm:text-sm">
+                <div className="flex items-center gap-2 font-medium text-foreground">
+                  <Clock className="w-4 h-4 text-violet-500 shrink-0" />
+                  <span>
+                    {isCanceled
+                      ? "Current Billing Period Ends"
+                      : "Subscription Expiry & Next Billing Date"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 font-semibold text-foreground">
+                  <span>{formattedExpiryDate}</span>
+                  <span className="text-[11px] font-normal text-muted-foreground">
+                    ({isCanceled ? "Will not renew" : "Auto-renews"})
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between items-center text-xs sm:text-sm">
               <span className="font-semibold text-foreground flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-violet-500" />

@@ -38,3 +38,52 @@ export const checkSubscription = async () => {
 
   return !!isValid;
 };
+
+export const getSubscriptionExpiry = async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      isPro: false,
+      stripeCurrentPeriodEnd: null,
+      stripeSubscriptionId: null,
+    };
+  }
+
+  const userSubscription = await prismadb.userSubscription.findUnique({
+    where: { userId },
+    select: {
+      stripeSubscriptionId: true,
+      stripeCurrentPeriodEnd: true,
+      stripeCustomerId: true,
+      stripePriceId: true,
+    },
+  });
+
+  const isDevPro =
+    process.env.DEV_FORCE_PRO === "true" ||
+    process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true";
+
+  if (!userSubscription) {
+    return {
+      isPro: isDevPro,
+      stripeCurrentPeriodEnd: isDevPro
+        ? new Date(Date.now() + 30 * DAY_IN_MS)
+        : null,
+      stripeSubscriptionId: null,
+    };
+  }
+
+  const isValid =
+    userSubscription.stripePriceId &&
+    userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
+
+  return {
+    isPro: !!isValid || isDevPro,
+    stripeCurrentPeriodEnd:
+      userSubscription.stripeCurrentPeriodEnd ||
+      (isDevPro ? new Date(Date.now() + 30 * DAY_IN_MS) : null),
+    stripeSubscriptionId: userSubscription.stripeSubscriptionId,
+  };
+};
+

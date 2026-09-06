@@ -14,9 +14,10 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Zap,
+  LogOut,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
@@ -56,6 +57,7 @@ export const Sidebar = ({
   const searchParams = useSearchParams();
   const activeChatId = searchParams?.get("id");
   const { user } = useUser();
+  const { signOut, openUserProfile } = useClerk();
   const proModal = useProModal();
   const activeTasks = useGenerationStore((state) => state.activeTasks);
 
@@ -361,6 +363,15 @@ export const Sidebar = ({
             <div className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition" title="My Account">
               <UserButton afterSignOutUrl="/" />
             </div>
+
+            {/* Quick Sign Out (Collapsed) */}
+            <button
+              onClick={() => signOut(() => router.push("/"))}
+              className="w-9 h-9 rounded-xl flex items-center justify-center border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
@@ -528,10 +539,22 @@ export const Sidebar = ({
           <div className="flex items-center justify-between p-2 rounded-xl bg-zinc-100/80 dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.08] hover:border-black/10 dark:hover:border-white/15 transition-colors">
             <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-1">
               <div className="shrink-0 flex items-center justify-center">
-                <UserButton afterSignOutUrl="/" />
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      userButtonPopoverCard: "z-[99999]",
+                      rootBox: "z-[99999]",
+                    },
+                  }}
+                />
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+              <div
+                onClick={() => openUserProfile?.()}
+                className="flex flex-col min-w-0 cursor-pointer group/profile hover:opacity-80 transition"
+                title="Manage profile & account"
+              >
+                <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate group-hover/profile:text-violet-500 transition-colors">
                   {displayName}
                 </span>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -548,8 +571,15 @@ export const Sidebar = ({
               </div>
             </div>
 
-            <div className="shrink-0">
+            <div className="shrink-0 flex items-center gap-1">
               <ModeToggle className="w-8 h-8 rounded-lg border-black/10 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-200/80 dark:hover:bg-white/10" />
+              <button
+                onClick={() => signOut(() => router.push("/"))}
+                className="w-8 h-8 rounded-lg flex items-center justify-center border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-colors cursor-pointer"
+                title="Sign out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>

@@ -171,3 +171,17 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Ensure Clerk UserButton popover and modals stay above all Radix sheets & overlays */
+.cl-userButtonPopover-root,
+.cl-userButtonPopoverCard,
+.cl-userButton-popover,
+.cl-rootBox,
+.cl-modalBackdrop,
+.cl-modalContent,
+[class*="cl-userButtonPopover"],
+[class*="cl-popover"],
+[class*="cl-modal"] {
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+}

@@ -533,7 +533,7 @@ export const OmnimodalChat = () => {
           "flex-1 min-h-0 pr-1",
           messages.length > 0
             ? "overflow-y-auto py-2 space-y-4"
-            : "overflow-y-auto no-scrollbar flex flex-col justify-center py-2"
+            : "overflow-y-auto no-scrollbar flex flex-col justify-start md:justify-center py-2"
         )}
       >
         {isLoadingChat || (activeChatId && messages.length === 0) ? (

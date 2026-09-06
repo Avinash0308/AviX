@@ -5,6 +5,8 @@ import prismadb from "@/lib/prismadb";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 const settingsUrl = absoluteUrl("/settings");
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 

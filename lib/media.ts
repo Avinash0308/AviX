@@ -98,7 +98,7 @@ export async function generateMusicWithFallback(
       `[Media Engine] Generating ${duration}s audio track with meta/musicgen...`
     );
     const output: any = await replicate.run(
-      "meta/musicgen:b05b1dff1d8c6dc63d14b0cdb42135378dcb87f6373b0d3d341ede46e5de30b3",
+      "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
       {
         input: {
           prompt: String(prompt),
@@ -119,8 +119,10 @@ export async function generateMusicWithFallback(
     };
   } catch (musicgenError: any) {
     console.warn(
-      `[Media Engine] MusicGen failed or busy (${musicgenError?.message || musicgenError}). Falling back to Riffusion...`
+      `[Media Engine] MusicGen failed (${musicgenError?.message || musicgenError}). Waiting for rate-limit reset before Riffusion fallback...`
     );
+    // Wait 3.5s to respect Replicate's 429 burst rate limit before fallback request
+    await new Promise((resolve) => setTimeout(resolve, 3500));
   }
 
   // Priority 2: Riffusion Emergency Fallback

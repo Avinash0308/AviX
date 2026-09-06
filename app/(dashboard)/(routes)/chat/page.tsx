@@ -1,15 +1,17 @@
 import { OmnimodalChat } from "@/components/omnimodal-chat";
 
-interface DashboardPageProps {
+interface ChatPageProps {
   searchParams?: {
     id?: string;
   };
 }
 
-export default function DashboardPage({ searchParams }: DashboardPageProps) {
+const ChatPage = ({ searchParams }: ChatPageProps) => {
   return (
     <div className="h-full">
       <OmnimodalChat />
     </div>
   );
-}
+};
+
+export default ChatPage;

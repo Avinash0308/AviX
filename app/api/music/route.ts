@@ -1,13 +1,9 @@
-import Replicate from "replicate";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN || "token_placeholder",
-});
+import { generateMusicWithFallback } from "@/lib/media";
 
 export async function POST(
   req: Request
@@ -15,7 +11,7 @@ export async function POST(
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const { prompt  } = body;
+    const { prompt } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -32,32 +28,17 @@ export async function POST(
       return new NextResponse("Free trial has expired. Please upgrade to pro.", { status: 403 });
     }
 
-    const response = await replicate.run(
-      "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
-      {
-        input: {
-          prompt_a: prompt
-        }
-      }
-    );
-
-    // const input = {
-    //   prompt: String(prompt),
-    //   model_version: "stereo-large",
-    //   duration: 10,
-    //   normalization_strategy: "peak",
-    //   output_format: "wav",
-    // };
-
-    // const response = await replicate.run(
-    //   "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb", { input }
-    // );
+    const musicResult = await generateMusicWithFallback(prompt);
 
     if (!isPro) {
       await incrementApiLimit();
     }
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      audio: musicResult.url,
+      modelUsed: musicResult.modelUsed,
+      duration: musicResult.duration,
+    });
   } catch (error) {
     console.log('[MUSIC_ERROR]', error);
     return new NextResponse("Internal Error", { status: 500 });

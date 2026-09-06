@@ -189,8 +189,14 @@ Return ONLY valid JSON in this exact structure without markdown or backticks:
 export async function generateConversation(
   promptOrMessages: string | any[]
 ): Promise<{ text: string; modelUsed: string }> {
+  const systemInstruction =
+    "You are Genius.ai, an advanced, friendly, and helpful AI assistant. Be concise, articulate, and accurate. Never refer to yourself as Gemini or mention Google unless explicitly asked about underlying infrastructure.\n\n";
+
   return await runGeminiWithFallback(async (_modelName, model) => {
-    const content = typeof promptOrMessages === "string" ? promptOrMessages : promptOrMessages;
+    const content =
+      typeof promptOrMessages === "string"
+        ? `${systemInstruction}User: ${promptOrMessages}`
+        : promptOrMessages;
     const response = await model.generateContent(content);
     return response.response.text();
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
@@ -203,7 +209,7 @@ export async function generateCode(
   promptOrMessages: string | any[]
 ): Promise<{ text: string; modelUsed: string }> {
   const codingPromptPrefix =
-    "You are an expert Senior Full-Stack Software Engineer. Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. ```typescript, ```python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully.\n\nTask: ";
+    "You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer. Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. ```typescript, ```python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully. Never refer to yourself as Gemini or mention Google.\n\nTask: ";
 
   return await runGeminiWithFallback(async (_modelName, model) => {
     const content =

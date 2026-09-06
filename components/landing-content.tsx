@@ -39,11 +39,11 @@ export const LandingContent = () => {
   const capabilities = [
     {
       title: "Omnimodal Chat",
-      subtitle: "Multi-turn conversational intelligence powered by Gemini 2.5 Flash with persistent thread history.",
+      subtitle: "Multi-turn conversational intelligence with persistent thread history and context awareness.",
       icon: MessageSquare,
       color: "text-violet-500",
       bgGradient: "from-violet-500/15 via-purple-500/5 to-transparent",
-      badge: "Gemini 2.5",
+      badge: "Smart Reasoning",
       stats: "Sub-second response time",
     },
     {
@@ -56,12 +56,12 @@ export const LandingContent = () => {
       stats: "Clean Markdown + 1-Click Copy",
     },
     {
-      title: "Flux Image Generation",
+      title: "AI Image Generation",
       subtitle: "Produce hyper-realistic photos, anime illustrations, digital art, and marketing graphics in crisp fidelity.",
       icon: ImageIcon,
       color: "text-pink-500",
       bgGradient: "from-pink-500/15 via-rose-500/5 to-transparent",
-      badge: "Flux Engine",
+      badge: "High Fidelity",
       stats: "Lossless Instant Downloads",
     },
     {
@@ -70,16 +70,16 @@ export const LandingContent = () => {
       icon: Music,
       color: "text-amber-500",
       bgGradient: "from-amber-500/15 via-orange-500/5 to-transparent",
-      badge: "Riffusion",
+      badge: "Studio Audio",
       stats: "Royalty-Free Audio Player",
     },
     {
       title: "Cinematic Video Creation",
-      subtitle: "Transform descriptive textual prompts into dynamic video sequences and visual reels using Zeroscope XL.",
+      subtitle: "Transform descriptive textual prompts into dynamic video sequences, motion graphics, and visual reels.",
       icon: Video,
       color: "text-blue-500",
       bgGradient: "from-blue-500/15 via-cyan-500/5 to-transparent",
-      badge: "Zeroscope XL",
+      badge: "Cinematic HD",
       stats: "Rendered in High Definition",
     },
   ];
@@ -101,9 +101,9 @@ export const LandingContent = () => {
         "Yes! Genius.ai stores your conversations and generation history securely on your account, so you can create new threads, resume past discussions, and reference your created code or media at any time.",
     },
     {
-      question: "Which AI models power the platform?",
+      question: "What makes Genius.ai unique?",
       answer:
-        "We combine state-of-the-art models from top providers: Google Gemini 2.5 Flash for conversational reasoning and code synthesis, Flux Ghibsky for image generation, Riffusion for audio synthesis, and Zeroscope V2 for text-to-video rendering.",
+        "Genius.ai combines conversational intelligence, code synthesis, photo-realistic image creation, audio composition, and cinematic video rendering into one unified platform with persistent history and zero tab switching.",
     },
     {
       question: "Can I use the generated content commercially?",
@@ -113,7 +113,7 @@ export const LandingContent = () => {
     {
       question: "What happens when I upgrade to the Pro plan?",
       answer:
-        "Upgrading to Pro unlocks unlimited generations across all 5 AI tools, priority server processing for faster speeds, early access to new AI model updates, and customer support with no credit limits.",
+        "Upgrading to Pro unlocks unlimited generations across all 5 AI tools, priority server processing for faster speeds, early access to new AI feature updates, and customer support with no credit limits.",
     },
   ];
 
@@ -124,7 +124,7 @@ export const LandingContent = () => {
       avatar: "MV",
       rating: 5,
       content:
-        "Having Gemini for code synthesis and debugging right next to conversation and media generation has completely replaced 3 different tabs in my daily dev workflow.",
+        "Having intelligent code synthesis and debugging right next to conversation and media generation has completely replaced 3 different tabs in my daily dev workflow.",
     },
     {
       name: "Elena Rostova",
@@ -132,7 +132,7 @@ export const LandingContent = () => {
       avatar: "ER",
       rating: 5,
       content:
-        "The Flux image model produces stunning concept art. I generate moodboards, video B-roll ideas, and background soundscapes all within one single subscription.",
+        "The image generation produces stunning concept art. I generate moodboards, video B-roll ideas, and background soundscapes all within one single subscription.",
     },
     {
       name: "Devon Clark",
@@ -140,7 +140,7 @@ export const LandingContent = () => {
       avatar: "DC",
       rating: 5,
       content:
-        "Genius.ai saved me over $80/month compared to paying for ChatGPT Plus, Midjourney, and Suno separately. The speed and quality are top tier.",
+        "Genius.ai saved me over $80/month compared to paying for multiple separate subscriptions. The speed and quality are top tier.",
     },
     {
       name: "Aisha Patel",
@@ -410,14 +410,14 @@ export const LandingContent = () => {
                 <span className="text-xs text-muted-foreground">/ free forever</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Ideal for testing out all 5 AI models before upgrading.
+                Ideal for testing out all 5 AI creative tools before upgrading.
               </p>
               <ul className="space-y-2.5 text-xs text-foreground/80 pt-4 border-t border-black/5 dark:border-white/10">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" /> 5 Free Generations across all tools
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Full Gemini 2.5 Flash reasoning
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Advanced conversational reasoning
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Saved conversation history

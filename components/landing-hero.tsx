@@ -52,8 +52,8 @@ export const LandingHero = () => {
       title: "Smart Conversation",
       prompt: "How does Genius.ai combine 5 AI modalities into one workspace?",
       response:
-        "Genius.ai uses an omnimodal engine. Instead of forcing you to switch tabs between ChatGPT, Midjourney, and Suno, you can converse, generate clean code, synthesize studio images, and compose audio from one unified interface with persistent history.",
-      badge: "Gemini 2.5 Flash",
+        "Genius.ai uses an omnimodal engine. Instead of forcing you to switch tabs between separate AI tools for text, images, and audio, you can converse, generate clean code, synthesize studio images, and compose audio from one unified interface with persistent history.",
+      badge: "Conversational AI",
       color: "from-violet-500 to-indigo-600",
       textColor: "text-violet-500",
       borderColor: "border-violet-500/30",
@@ -86,7 +86,7 @@ export function useDarkMode() {
     image: {
       title: "Hyper-Detailed Visual Art",
       prompt: "A stunning cinematic hyper-realistic portrait of a cybernetic tiger with glowing circuits walking through a neon-lit rainy Tokyo cyberpunk alley, 8k digital art",
-      badge: "Flux Ghibsky Model",
+      badge: "Visual Art Studio",
       color: "from-pink-500 to-rose-600",
       textColor: "text-pink-500",
       borderColor: "border-pink-500/30",
@@ -95,7 +95,7 @@ export function useDarkMode() {
     music: {
       title: "Studio Audio & Soundtracks",
       prompt: "Lo-fi ambient chord progression with warm electric piano, vinyl crackle, and soft harmonic atmosphere",
-      badge: "Riffusion Engine",
+      badge: "Studio Audio",
       color: "from-amber-500 to-orange-600",
       textColor: "text-amber-500",
       borderColor: "border-amber-500/30",
@@ -104,7 +104,7 @@ export function useDarkMode() {
     video: {
       title: "Cinematic AI Video",
       prompt: "A breathtaking cinematic 8k drone shot of northern lights aurora borealis glowing emerald green over snow-covered fjord mountains at dusk",
-      badge: "Zeroscope XL",
+      badge: "Cinematic Motion",
       color: "from-blue-500 to-cyan-600",
       textColor: "text-blue-500",
       borderColor: "border-blue-500/30",
@@ -379,7 +379,7 @@ export function useDarkMode() {
                       </a>
                     </div>
                     <div className="absolute bottom-3 left-3 right-3 z-10 space-y-1">
-                      <p className="text-xs font-bold text-white drop-shadow">Flux Cybernetic Tiger</p>
+                      <p className="text-xs font-bold text-white drop-shadow">Cybernetic Tiger</p>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-500/80 backdrop-blur-md text-white font-mono">
                           1024 x 1024
@@ -392,9 +392,9 @@ export function useDarkMode() {
                     <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-500 bg-pink-500/10 px-2.5 py-0.5 rounded-full border border-pink-500/20">
                       <Sparkles className="w-3 h-3" /> Live Generation Output
                     </div>
-                    <h3 className="text-lg font-bold text-foreground">Flux High-Resolution Art Engine</h3>
+                    <h3 className="text-lg font-bold text-foreground">High-Resolution Art Engine</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Powered by the Flux Ghibsky illustration model. Synthesizes intricate textures, realistic reflections, and volumetric lighting from single-sentence prompts.
+                      Synthesizes intricate textures, realistic reflections, and volumetric lighting from single-sentence prompts.
                     </p>
                     <div className="flex items-center gap-2 pt-2">
                       <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
@@ -449,7 +449,7 @@ export function useDarkMode() {
                     </div>
                   </div>
                   <p className="text-xs text-center text-muted-foreground">
-                    Real AI audio synthesized via Riffusion spectrogram modeling. Royalty-free for streams, podcasts, games, and video soundtracks.
+                    Real AI audio synthesized in seconds. Royalty-free for streams, podcasts, games, and video soundtracks.
                   </p>
                 </div>
               )}
@@ -468,7 +468,7 @@ export function useDarkMode() {
                     />
                     <div className="absolute top-3 right-3 z-10">
                       <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded-md bg-black/60 backdrop-blur-md text-white border border-white/20">
-                        Zeroscope 1080p
+                        Full HD 1080p
                       </span>
                     </div>
                     <div className="absolute bottom-3 left-3 z-10">
@@ -484,7 +484,7 @@ export function useDarkMode() {
                     </div>
                     <h3 className="text-lg font-bold text-foreground">Smooth Cinematic Video Synthesis</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Powered by Zeroscope XL. Generates continuous cinematic camera motions, aerial landscapes, and atmospheric B-roll directly from prompts.
+                      Generates continuous cinematic camera motions, aerial landscapes, and atmospheric B-roll directly from prompts.
                     </p>
                     <div className="flex items-center gap-2 pt-2">
                       <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>

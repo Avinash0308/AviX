@@ -72,7 +72,7 @@ export const LandingNavbar = () => {
       <header className="fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-500 pointer-events-none px-3 sm:px-6 pt-3 sm:pt-4">
         <div
           className={cn(
-            "w-full flex items-center justify-between pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "w-full flex items-center justify-between pointer-events-auto transition-all duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]",
             isScrolled
               ? "max-w-3xl h-12 sm:h-13 py-1.5 sm:py-2 px-3 sm:px-6 rounded-full backdrop-blur-2xl backdrop-saturate-150 bg-white/60 dark:bg-slate-950/60 border border-black/10 dark:border-white/15 shadow-[0_12px_36px_0_rgba(0,0,0,0.1),inset_0_1px_1px_0_rgba(255,255,255,0.7)] dark:shadow-[0_16px_48px_0_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.15)]"
               : "max-w-6xl mx-auto h-14 sm:h-15 py-2 px-3.5 sm:px-7 rounded-2xl sm:rounded-full backdrop-blur-2xl backdrop-saturate-150 bg-white/55 dark:bg-slate-950/55 border border-black/10 dark:border-white/12 shadow-[0_8px_30px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_10px_35px_0_rgba(0,0,0,0.45),inset_0_1px_1px_0_rgba(255,255,255,0.12)]"

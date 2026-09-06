@@ -29,3 +29,29 @@ model UserSubscription {
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
+
+model Conversation {
+  id        String    @id @default(cuid())
+  userId    String    @db.VarChar(255)
+  title     String    @default("New Chat")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String       // "user" | "assistant"
+  content        String       @db.Text
+  type           String       @default("text") // "text" | "code" | "image" | "audio" | "video"
+  mediaUrl       String?      @db.Text
+  modelUsed      String?
+  duration       Int?         // for audio / video
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}

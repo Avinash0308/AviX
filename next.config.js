@@ -1,14 +1,4 @@
 /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   images: {
-//     domains: [
-//       "googleusercontent.com",
-//       "oaidalleapiprodscus.blob.core.windows.net",
-//       "replicate.delivery"
-//     ]
-//   },
-// }
-
 module.exports = {
   images: {
     formats: ["image/avif", "image/webp"],
@@ -31,4 +21,33 @@ module.exports = {
       },
     ],
   },
-}
+  async redirects() {
+    return [
+      {
+        source: '/conversation',
+        destination: '/chat',
+        permanent: true,
+      },
+      {
+        source: '/code',
+        destination: '/chat',
+        permanent: true,
+      },
+      {
+        source: '/images',
+        destination: '/chat',
+        permanent: true,
+      },
+      {
+        source: '/music',
+        destination: '/chat',
+        permanent: true,
+      },
+      {
+        source: '/video',
+        destination: '/chat',
+        permanent: true,
+      },
+    ];
+  },
+};

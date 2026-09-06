@@ -51,7 +51,7 @@ export const ProModal = () => {
           </DialogTitle>
           <DialogDescription className="text-center pt-2 space-y-2 text-zinc-900 font-medium">
             {tools.map((tool) => (
-              <Card key={tool.href} className="p-2.5 sm:p-3 border-black/5 flex items-center justify-between rounded-xl">
+              <Card key={tool.label} className="p-2.5 sm:p-3 border-black/5 flex items-center justify-between rounded-xl">
                 <div className="flex items-center gap-x-3 sm:gap-x-4">
                   <div className={cn("p-1.5 sm:p-2 w-fit rounded-lg", tool.bgColor)}>
                     <tool.icon className={cn("w-5 h-5 sm:w-6 sm:h-6", tool.color)} />

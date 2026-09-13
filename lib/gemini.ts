@@ -12,7 +12,11 @@ export const GEMINI_FALLBACK_CHAIN = [
 
 export type ModalityCategory = "CONVERSATION" | "CODE" | "IMAGE" | "MUSIC" | "VIDEO";
 
-export interface ChatMessage {
+/**
+ * Minimal message shape used exclusively for building Gemini API history turns.
+ * For the full UI message type, see ChatMessage in @/lib/types.
+ */
+export interface GeminiMessage {
   role: "user" | "assistant";
   content: string;
   type?: string;
@@ -69,7 +73,7 @@ export function cleanHeuristicTitle(prompt: string): string {
  */
 export function classifyWithHeuristics(
   prompt: string,
-  history: ChatMessage[] = []
+  history: GeminiMessage[] = []
 ): IntentClassification {
   const text = prompt.toLowerCase().trim();
   const title = cleanHeuristicTitle(prompt);
@@ -85,7 +89,7 @@ export function classifyWithHeuristics(
   // Follow-up detection if prompt refers to recent interaction
   const lastAssistantMessage =
     history.length > 0
-      ? [...history].reverse().find((m) => m.role === "assistant")
+      ? [...history].reverse().find((m: GeminiMessage) => m.role === "assistant")
       : undefined;
 
   const isFollowUp =
@@ -207,14 +211,46 @@ export function classifyWithHeuristics(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Classifier cache
+// Caches results for standalone prompts (no history) to avoid duplicate
+// Gemini API calls in the same server process lifetime.
+// Max 100 entries (oldest evicted), 5-minute TTL.
+// ---------------------------------------------------------------------------
+const CLASSIFIER_CACHE_TTL_MS = 5 * 60 * 1000;
+const CLASSIFIER_CACHE_MAX = 100;
+
+const classifierCache = new Map<
+  string,
+  { result: IntentClassification; expiresAt: number }
+>();
+
+function pruneClassifierCache() {
+  if (classifierCache.size <= CLASSIFIER_CACHE_MAX) return;
+  // Delete oldest insertion (Map preserves insertion order)
+  const firstKey = classifierCache.keys().next().value;
+  if (firstKey !== undefined) classifierCache.delete(firstKey);
+}
+
 /**
  * Classifies prompt intent using the Gemini fallback chain with local heuristic safety net
  * and contextual prompt synthesis for follow-up edits.
  */
 export async function classifyPromptIntent(
   userPrompt: string,
-  history: ChatMessage[] = []
+  history: GeminiMessage[] = []
 ): Promise<IntentClassification> {
+  // Only cache when there is no history context — follow-up prompts depend on
+  // prior turns and must not be served from a standalone-prompt cache entry.
+  const cacheKey = history.length === 0 ? userPrompt.trim().toLowerCase() : null;
+
+  if (cacheKey) {
+    const cached = classifierCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+      return cached.result;
+    }
+  }
+
   let contextSnippet = "";
   if (history && history.length > 0) {
     const recent = history.slice(-6);
@@ -282,11 +318,21 @@ Return ONLY valid JSON in this exact structure without markdown or backticks:
       };
     });
 
-    return {
+    const finalResult: IntentClassification = {
       ...result,
       source: "gemini",
       modelUsed,
     };
+
+    if (cacheKey) {
+      classifierCache.set(cacheKey, {
+        result: finalResult,
+        expiresAt: Date.now() + CLASSIFIER_CACHE_TTL_MS,
+      });
+      pruneClassifierCache();
+    }
+
+    return finalResult;
   } catch (error) {
     console.warn("[Gemini Classifier] Fallback chain failed. Using Heuristic rules:", error);
     return classifyWithHeuristics(userPrompt, history);
@@ -322,7 +368,7 @@ Rules:
  */
 export function buildGeminiContentTurns(
   systemInstruction: string,
-  history: ChatMessage[] = [],
+  history: GeminiMessage[] = [],
   currentPrompt: string
 ) {
   const contents: { role: "user" | "model"; parts: { text: string }[] }[] = [];
@@ -379,7 +425,7 @@ export function buildGeminiContentTurns(
  */
 export async function generateConversation(
   prompt: string,
-  history: ChatMessage[] = []
+  history: GeminiMessage[] = []
 ): Promise<{ text: string; modelUsed: string }> {
   const systemInstruction =
     "You are Genius.ai, an advanced, friendly, and helpful AI assistant. Be concise, articulate, and accurate. When presenting tabular data, lists, or comparisons, format them cleanly using standard GitHub Flavored Markdown tables. When generating checklists or task lists, use markdown task format with empty unchecked boxes (- [ ]) by default so users can tick them off interactively, unless the user explicitly requests items to be pre-checked. When writing mathematical or scientific formulas, format them with LaTeX ($...$ for inline, $$...$$ for blocks). When generating workflows or architecture diagrams, use standard ```mermaid code blocks with double-quoted node labels (e.g. A[\"Step 1 (Details)\"] or B{\"Decision?\"}) and standard arrows with pipe labels (e.g. A -->|label| B) so punctuation parses cleanly. For key takeaways or notes, use blockquotes (> Note: ...). Never refer to yourself as Gemini or mention Google unless explicitly asked about underlying infrastructure.\n\n";
@@ -397,7 +443,7 @@ export async function generateConversation(
  */
 export async function generateCode(
   prompt: string,
-  history: ChatMessage[] = []
+  history: GeminiMessage[] = []
 ): Promise<{ text: string; modelUsed: string }> {
   const codingPromptPrefix =
     "You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer. Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. ```typescript, ```python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully. Never refer to yourself as Gemini or mention Google.\n\n";

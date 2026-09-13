@@ -1,6 +1,18 @@
 import { Code, ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
 
 export const MAX_FREE_COUNTS = 5;
+export const DEFAULT_LOADING_STATUS = "Genius.ai is thinking...";
+export const DEFAULT_CHAT_TITLE = "New Conversation";
+
+export const MESSAGE_TYPES = {
+  CONVERSATION: "conversation",
+  CODE: "code",
+  IMAGE: "image",
+  MUSIC: "music",
+  VIDEO: "video",
+} as const;
+
+export type MessageType = (typeof MESSAGE_TYPES)[keyof typeof MESSAGE_TYPES];
 
 export const tools = [
   {

@@ -11,6 +11,24 @@ export interface MediaGenerationResult {
   duration?: number;
 }
 
+// ---------------------------------------------------------------------------
+// Typed output shapes for Replicate model responses
+// ---------------------------------------------------------------------------
+
+/** FLUX.1 [schnell] returns an array of image URLs (one per requested output) */
+type FluxSchnellOutput = string[];
+
+/** MusicGen returns a direct audio URL string */
+type MusicGenOutput = string;
+
+/** Riffusion returns an object with an `audio` property */
+interface RiffusionOutput {
+  audio: string;
+}
+
+/** LTX-Video returns a single video URL string or an array */
+type LtxVideoOutput = string | string[];
+
 /**
  * Generate photorealistic real-life images with automatic fallback
  * Primary: black-forest-labs/flux-schnell ($0.003)
@@ -33,7 +51,7 @@ export async function generateImageWithFallback(
   // Priority 1: FLUX.1 [schnell] (~$0.003 / image, 1.5s)
   try {
     console.log("[Media Engine] Generating image with black-forest-labs/flux-schnell...");
-    const output: any = await replicate.run(
+    const output = (await replicate.run(
       "black-forest-labs/flux-schnell" as any,
       {
         input: {
@@ -43,7 +61,7 @@ export async function generateImageWithFallback(
           output_format: "webp",
         },
       }
-    );
+    )) as FluxSchnellOutput;
 
     const persistentUrl = await persistMedia(
       Array.isArray(output) ? output : [output],
@@ -63,7 +81,7 @@ export async function generateImageWithFallback(
   // Priority 2: SDXL Photographic Fallback (~$0.004 / image)
   try {
     console.log("[Media Engine] Generating image with stability-ai/sdxl...");
-    const output: any = await replicate.run(
+    const output = (await replicate.run(
       "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
       {
         input: {
@@ -73,7 +91,7 @@ export async function generateImageWithFallback(
           num_outputs: numOutputs,
         },
       }
-    );
+    )) as unknown as FluxSchnellOutput; // SDXL also returns string[]
 
     const persistentUrl = await persistMedia(
       Array.isArray(output) ? output : [output],
@@ -112,7 +130,7 @@ export async function generateMusicWithFallback(
       console.log(
         `[Media Engine] Generating ${duration}s audio track with meta/musicgen (${version})...`
       );
-      const output: any = await replicate.run(
+      const output = (await replicate.run(
         "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
         {
           input: {
@@ -123,9 +141,9 @@ export async function generateMusicWithFallback(
             normalization_strategy: "loudness",
           },
         }
-      );
+      )) as unknown as MusicGenOutput;
 
-      const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
+      const audioUrl = typeof output === "string" ? output : (output as unknown as RiffusionOutput)?.audio || String(output);
       const persistentAudio = await persistMedia(audioUrl, "audio");
 
       return {
@@ -147,16 +165,16 @@ export async function generateMusicWithFallback(
   // Priority 2: Riffusion Emergency Fallback (Generates fixed ~5 second audio loop)
   try {
     console.log("[Media Engine] MusicGen unavailable. Generating with riffusion/riffusion emergency fallback...");
-    const output: any = await replicate.run(
+    const output = (await replicate.run(
       "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
       {
         input: {
           prompt_a: String(prompt),
         },
       }
-    );
+    )) as unknown as RiffusionOutput | string;
 
-    const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
+    const audioUrl = typeof output === "string" ? output : output?.audio || String(output);
     const persistentAudio = await persistMedia(audioUrl, "audio");
 
     return {
@@ -189,7 +207,7 @@ export async function generateVideo(
   console.log("[Media Engine] Generating cinematic video with lightricks/ltx-video (~$0.068)...");
 
   try {
-    const output: any = await replicate.run(
+    const output = (await replicate.run(
       "lightricks/ltx-video:5ddec822499d46d11a93a92ef87e26adefda6608279d9d35c454e50e5e298d92",
       {
         input: {
@@ -201,7 +219,7 @@ export async function generateVideo(
           steps: 30,
         },
       }
-    );
+    )) as unknown as LtxVideoOutput;
 
     const videoUrl = typeof output === "string" ? output : Array.isArray(output) ? output[0] : output;
     const persistentVideo = await persistMedia(videoUrl, "video");

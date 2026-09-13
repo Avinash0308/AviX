@@ -20,10 +20,14 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useGenerationStore } from "@/hooks/use-generation-store";
+import { useChatSyncStore } from "@/hooks/use-chat-sync-store";
 import { OmnimodalEmpty } from "@/components/omnimodal-empty";
-import { OmnimodalMessage, ChatMessage } from "@/components/omnimodal-message";
+import { OmnimodalMessage } from "@/components/omnimodal-message";
+import type { ChatMessage } from "@/lib/types";
 import { BotAvatar } from "@/components/bot-avatar";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { cn } from "@/lib/utils";
+import { DEFAULT_LOADING_STATUS, DEFAULT_CHAT_TITLE } from "@/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,13 +64,19 @@ export const OmnimodalChat = () => {
   const [editingTitleText, setEditingTitleText] = useState("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingStatus, setLoadingStatus] = useState("Genius.ai is thinking...");
+  const [loadingStatus, setLoadingStatus] = useState(DEFAULT_LOADING_STATUS);
   const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
   const [typedText, setTypedText] = useState(ROTATING_PLACEHOLDERS[0]);
   const [showCursor, setShowCursor] = useState(true);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const newChatSignal = useChatSyncStore((s) => s.newChatSignal);
+  const taskResult = useChatSyncStore((s) =>
+    activeChatId ? s.taskResults[activeChatId] : undefined
+  );
+  // Ref used to detect CHANGES to newChatSignal (skip initial mount value)
+  const prevNewChatSignalRef = useRef(newChatSignal);
   const newlyCreatedChatIdRef = useRef<string | null>(null);
   const currentChatIdRef = useRef<string | null | undefined>(activeChatId);
 
@@ -168,10 +178,12 @@ export const OmnimodalChat = () => {
     setIsLoading(!!runningTask);
     if (runningTask) {
       setLoadingStatus(runningTask.loadingStatus);
+    } else {
+      setLoadingStatus(DEFAULT_LOADING_STATUS);
     }
     setIsEditingTitle(false);
     setEditingTitleText("");
-    setChatTitle(activeChatId ? "" : "New Conversation");
+    setChatTitle(activeChatId ? "" : DEFAULT_CHAT_TITLE);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -231,55 +243,50 @@ export const OmnimodalChat = () => {
     };
   }, [activeChatId, router]);
 
-  // Listen for global background task completion/failure
+  // Consume task results from the sync store.
+  // This handles the case where the user navigated away and came back while a
+  // generation was in progress — the result is waiting in the store.
+  // The onSuccess callback in executeGeneration handles the "user stayed" case;
+  // the id-deduplication guard prevents double-adding the same message.
   useEffect(() => {
-    const handleTaskCompleted = (e: Event) => {
-      const { chatId, assistantMessage, title } = (e as CustomEvent).detail;
-      if (chatId === currentChatIdRef.current) {
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === assistantMessage.id)) return prev;
-          return [...prev, assistantMessage];
-        });
-        setIsLoading(false);
-        if (title) {
-          setChatTitle(title);
-        }
-      }
-    };
+    if (!taskResult || !activeChatId) return;
 
-    const handleTaskFailed = (e: Event) => {
-      const { chatId } = (e as CustomEvent).detail;
-      if (chatId === currentChatIdRef.current) {
-        setIsLoading(false);
-      }
-    };
-
-    window.addEventListener("task-completed", handleTaskCompleted);
-    window.addEventListener("task-failed", handleTaskFailed);
-    return () => {
-      window.removeEventListener("task-completed", handleTaskCompleted);
-      window.removeEventListener("task-failed", handleTaskFailed);
-    };
-  }, []);
-
-  // Listen for "new-chat-clicked" event from sidebar
-  useEffect(() => {
-    const handleNewChat = () => {
-      setMessages([]);
-      setChatTitle("New Conversation");
-      setInput("");
+    if (taskResult.status === "completed" && taskResult.assistantMessage) {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === taskResult.assistantMessage!.id)) return prev;
+        return [...prev, taskResult.assistantMessage!];
+      });
       setIsLoading(false);
-      setIsLoadingChat(false);
-      setIsEditingTitle(false);
-      setEditingTitleText("");
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
+      if (taskResult.title) {
+        setChatTitle(taskResult.title);
       }
-    };
+    } else if (taskResult.status === "failed") {
+      setIsLoading(false);
+    }
 
-    window.addEventListener("new-chat-clicked", handleNewChat);
-    return () => window.removeEventListener("new-chat-clicked", handleNewChat);
-  }, []);
+    // Clear the consumed result from the store
+    useChatSyncStore.getState().clearTaskResult(activeChatId);
+  }, [taskResult, activeChatId]);
+
+  // Subscribe to newChatSignal from the sync store.
+  // Using a ref to skip the initial mount value — we only want to reset when
+  // the signal INCREMENTS (i.e. user clicked "New chat"), not on every render.
+  useEffect(() => {
+    if (prevNewChatSignalRef.current === newChatSignal) return;
+    prevNewChatSignalRef.current = newChatSignal;
+
+    setMessages([]);
+    setChatTitle(DEFAULT_CHAT_TITLE);
+    setInput("");
+    setIsLoading(false);
+    setLoadingStatus(DEFAULT_LOADING_STATUS);
+    setIsLoadingChat(false);
+    setIsEditingTitle(false);
+    setEditingTitleText("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+  }, [newChatSignal]);
 
   // Auto-scroll to bottom whenever messages update or loading starts
   useEffect(() => {
@@ -335,7 +342,7 @@ export const OmnimodalChat = () => {
       try {
         await axios.patch(`/api/chat/${activeChatId}`, { title: trimmed });
         toast.success("Chat renamed");
-        window.dispatchEvent(new CustomEvent("chat-history-updated"));
+        useChatSyncStore.getState().bumpHistory();
       } catch (error) {
         toast.error("Failed to rename chat");
       }
@@ -413,10 +420,15 @@ export const OmnimodalChat = () => {
   };
 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-  const handleClearChat = async () => {
+  const handleClearChat = () => {
     if (messages.length === 0 || isDeleting) return;
-    if (!confirm("Delete this conversation?")) return;
+    setShowClearConfirm(true);
+  };
+
+  const handleConfirmClearChat = async () => {
+    if (messages.length === 0 || isDeleting) return;
 
     if (activeChatId) {
       setIsDeleting(true);
@@ -424,16 +436,18 @@ export const OmnimodalChat = () => {
         await axios.delete(`/api/chat/${activeChatId}`);
         toast.success("Chat deleted");
         setMessages([]);
-        window.dispatchEvent(new CustomEvent("chat-history-updated"));
+        useChatSyncStore.getState().bumpHistory();
         router.push("/chat");
       } catch (error) {
         toast.error("Failed to delete chat.");
       } finally {
         setIsDeleting(false);
+        setShowClearConfirm(false);
       }
     } else {
       setMessages([]);
       toast.success("Conversation cleared");
+      setShowClearConfirm(false);
     }
   };
 
@@ -707,7 +721,7 @@ export const OmnimodalChat = () => {
             <div
               onScroll={handleScroll}
               className={cn(
-                "h-full overflow-y-auto pl-1 pr-3 sm:pr-4 md:pr-6 pb-28 md:pb-36 py-2 space-y-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-120px),rgba(0,0,0,0.25)_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_calc(100%-120px),rgba(0,0,0,0.25)_100%)]",
+                "h-full overflow-y-auto pl-1 pr-3 sm:pr-4 md:pr-6 pb-36 sm:pb-36 md:pb-40 py-2 space-y-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)]",
                 isScrolling && "is-scrolling"
               )}
             >
@@ -736,16 +750,25 @@ export const OmnimodalChat = () => {
                 </div>
               )}
 
-              <div ref={scrollRef} className="h-4" />
+              {/* Clearance spacer on mobile so last message actions (Read / Copy) are never obscured by floating input */}
+              <div className="h-12 sm:h-8 w-full shrink-0" aria-hidden="true" />
+              <div ref={scrollRef} className="h-2" />
             </div>
 
             {/* Floating Omnimodal Prompt Input Bar at Bottom */}
-            <div className="absolute bottom-4 md:bottom-6 left-0 right-0 px-1 pointer-events-none">
+            <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 left-0 right-0 px-1 pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
               {renderInputForm(false)}
             </div>
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        onConfirm={handleConfirmClearChat}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

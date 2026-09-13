@@ -5,27 +5,37 @@ import crypto from "crypto";
 
 export type SupportedMediaType = "image" | "audio" | "video";
 
-// Configure Cloudinary from environment variables
-const isCloudinaryConfigured = Boolean(
-  (process.env.CLOUDINARY_URL) ||
-  (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET)
-);
+// Lazy-initialized Cloudinary configuration
+let isCloudinaryInitialized = false;
+let isCloudinaryAvailable = false;
 
-if (isCloudinaryConfigured) {
-  if (process.env.CLOUDINARY_URL) {
-    cloudinary.config({
-      secure: true,
-    });
-  } else {
-    cloudinary.config({
-      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      secure: true,
-    });
+function ensureCloudinaryConfig(): boolean {
+  if (isCloudinaryInitialized) return isCloudinaryAvailable;
+
+  isCloudinaryAvailable = Boolean(
+    process.env.CLOUDINARY_URL ||
+    (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET)
+  );
+
+  if (isCloudinaryAvailable) {
+    if (process.env.CLOUDINARY_URL) {
+      cloudinary.config({
+        secure: true,
+      });
+    } else {
+      cloudinary.config({
+        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+        secure: true,
+      });
+    }
   }
+
+  isCloudinaryInitialized = true;
+  return isCloudinaryAvailable;
 }
 
 /**
@@ -150,7 +160,7 @@ export async function persistMedia(
       return url;
     }
 
-    if (isCloudinaryConfigured) {
+    if (ensureCloudinaryConfig()) {
       try {
         return await uploadToCloudinary(url, type);
       } catch (cloudErr: any) {
@@ -170,6 +180,3 @@ export async function persistMedia(
 
   return await saveSingle(mediaInput);
 }
-
-// Backward compatibility alias
-export const persistMediaLocally = persistMedia;

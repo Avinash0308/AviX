@@ -9,9 +9,15 @@ import { Plus } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { MobileSidebar } from "@/components/mobile-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useChatSyncStore } from "@/hooks/use-chat-sync-store";
+import { useSidebarResize, DEFAULT_WIDTH } from "@/hooks/use-sidebar-resize";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { cn } from "@/lib/utils";
 
 const montserrat = Montserrat({ weight: "700", subsets: ["latin"] });
+
+const COLLAPSED_WIDTH = 68;
+const LS_KEY_COLLAPSED = "avix_sidebar_collapsed";
 
 interface DashboardLayoutClientProps {
   isPro: boolean;
@@ -19,61 +25,46 @@ interface DashboardLayoutClientProps {
   children: React.ReactNode;
 }
 
-const DEFAULT_WIDTH = 280;
-const MIN_WIDTH = 240;
-const MAX_WIDTH = 480;
-const COLLAPSED_WIDTH = 68;
-
 export const DashboardLayoutClient = ({
   isPro,
   apiLimitCount,
   children,
 }: DashboardLayoutClientProps) => {
   const router = useRouter();
-  const [sidebarWidth, setSidebarWidth] = useState<number>(DEFAULT_WIDTH);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
 
-  // Load preferences and detect mobile viewport on mount
+  // Extracted hooks — each concern isolated to a single file
+  const isMobile = useIsMobile();
+  const { sidebarWidth, isDragging, startResizing, resetWidth } =
+    useSidebarResize({ isCollapsed });
+
+  // Mount: restore collapse state + attach global scroll class toggler
   useEffect(() => {
     setIsMounted(true);
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    const savedWidth = localStorage.getItem("avix_sidebar_width");
-    if (savedWidth) {
-      const parsed = parseInt(savedWidth, 10);
-      if (!isNaN(parsed)) {
-        const clamped = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, parsed));
-        setSidebarWidth(clamped);
-      }
-    }
-
-    const savedCollapsed = localStorage.getItem("avix_sidebar_collapsed");
-    if (savedCollapsed) {
-      setIsCollapsed(savedCollapsed === "true");
-    }
+    const saved = localStorage.getItem(LS_KEY_COLLAPSED);
+    if (saved) setIsCollapsed(saved === "true");
 
     let scrollTimer: NodeJS.Timeout;
     const handleGlobalScroll = () => {
       document.body.classList.add("is-scrolling");
       clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        document.body.classList.remove("is-scrolling");
-      }, 1000);
+      scrollTimer = setTimeout(
+        () => document.body.classList.remove("is-scrolling"),
+        1000
+      );
     };
 
-    window.addEventListener("scroll", handleGlobalScroll, { passive: true, capture: true });
+    window.addEventListener("scroll", handleGlobalScroll, {
+      passive: true,
+      capture: true,
+    });
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
-      window.removeEventListener("scroll", handleGlobalScroll, { capture: true });
+      window.removeEventListener("scroll", handleGlobalScroll, {
+        capture: true,
+      });
       clearTimeout(scrollTimer);
     };
   }, []);
@@ -81,48 +72,10 @@ export const DashboardLayoutClient = ({
   const toggleCollapse = useCallback(() => {
     setIsCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem("avix_sidebar_collapsed", String(next));
+      localStorage.setItem(LS_KEY_COLLAPSED, String(next));
       return next;
     });
   }, []);
-
-  // Mouse Drag Resizing Logic (only active when expanded)
-  const startResizing = useCallback(
-    (e: React.MouseEvent) => {
-      if (isCollapsed) return;
-      e.preventDefault();
-      setIsDragging(true);
-    },
-    [isCollapsed]
-  );
-
-  const stopResizing = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const resize = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || isCollapsed) return;
-      let newWidth = e.clientX;
-      if (newWidth < MIN_WIDTH) newWidth = MIN_WIDTH;
-      if (newWidth > MAX_WIDTH) newWidth = MAX_WIDTH;
-
-      setSidebarWidth(newWidth);
-      localStorage.setItem("avix_sidebar_width", String(newWidth));
-    },
-    [isDragging, isCollapsed]
-  );
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", resize);
-      window.addEventListener("mouseup", stopResizing);
-    }
-    return () => {
-      window.removeEventListener("mousemove", resize);
-      window.removeEventListener("mouseup", stopResizing);
-    };
-  }, [isDragging, resize, stopResizing]);
 
   if (!isMounted) {
     return <div className="h-full bg-background" />;
@@ -148,11 +101,11 @@ export const DashboardLayoutClient = ({
             onToggleCollapse={toggleCollapse}
           />
 
-          {/* Drag Resize Handle (Only available when expanded) */}
+          {/* Drag Resize Handle (only when expanded) */}
           {!isCollapsed && (
             <div
               onMouseDown={startResizing}
-              onDoubleClick={() => setSidebarWidth(DEFAULT_WIDTH)}
+              onDoubleClick={resetWidth}
               className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-violet-500/20 active:bg-violet-500/40 transition-colors z-50"
               title="Drag to resize sidebar (Double click to reset)"
             />
@@ -169,7 +122,7 @@ export const DashboardLayoutClient = ({
           isDragging ? "transition-none select-none" : ""
         }`}
       >
-        {/* Mobile Header (Sleek Glassmorphic Navbar for Mobile) */}
+        {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between px-3 py-2 border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-40 shrink-0">
           <div className="flex items-center gap-2">
             <MobileSidebar isPro={isPro} apiLimitCount={apiLimitCount} />
@@ -187,7 +140,7 @@ export const DashboardLayoutClient = ({
             <button
               onClick={() => {
                 router.push("/chat");
-                window.dispatchEvent(new CustomEvent("new-chat-clicked"));
+                useChatSyncStore.getState().triggerNewChat();
               }}
               className="p-1.5 rounded-lg border border-border/60 bg-secondary/50 hover:bg-secondary text-foreground transition-all cursor-pointer"
               title="New chat"

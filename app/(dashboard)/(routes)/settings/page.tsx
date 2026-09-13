@@ -100,6 +100,7 @@ const SettingsPage = async ({ searchParams }: SettingsPageProps) => {
 
         if (
           !subscriptionExpiryDate &&
+          process.env.NODE_ENV === "development" &&
           (process.env.DEV_FORCE_PRO === "true" ||
             process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true")
         ) {

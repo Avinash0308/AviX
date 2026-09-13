@@ -4,16 +4,25 @@ import prismadb from "@/lib/prismadb";
 
 const DAY_IN_MS = 86_400_000;
 
-export const checkSubscription = async () => {
-  // Development toggle to test Pro features without active Stripe webhook
-  if (process.env.DEV_FORCE_PRO === "true" || process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true") {
-    return true;
-  }
+// Development-only Pro toggle — strictly disabled in production
+const isDevForceProActive = () => {
+  return (
+    process.env.NODE_ENV === "development" &&
+    (process.env.DEV_FORCE_PRO === "true" ||
+      process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true")
+  );
+};
 
+export const checkSubscription = async () => {
   const { userId } = await auth();
 
   if (!userId) {
     return false;
+  }
+
+  // Development toggle to test Pro features without active Stripe webhook
+  if (isDevForceProActive()) {
+    return true;
   }
 
   const userSubscription = await prismadb.userSubscription.findUnique({
@@ -26,7 +35,7 @@ export const checkSubscription = async () => {
       stripeCustomerId: true,
       stripePriceId: true,
     },
-  })
+  });
 
   if (!userSubscription) {
     return false;
@@ -34,9 +43,10 @@ export const checkSubscription = async () => {
 
   const isValid =
     userSubscription.stripePriceId &&
-    userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now()
+    userSubscription.stripeCurrentPeriodEnd &&
+    userSubscription.stripeCurrentPeriodEnd.getTime() + DAY_IN_MS > Date.now();
 
-  return !!isValid;
+  return Boolean(isValid);
 };
 
 export const getSubscriptionExpiry = async () => {
@@ -60,9 +70,7 @@ export const getSubscriptionExpiry = async () => {
     },
   });
 
-  const isDevPro =
-    process.env.DEV_FORCE_PRO === "true" ||
-    process.env.NEXT_PUBLIC_DEV_FORCE_PRO === "true";
+  const isDevPro = isDevForceProActive();
 
   if (!userSubscription) {
     return {

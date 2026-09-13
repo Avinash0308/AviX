@@ -3,11 +3,14 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { checkSubscription } from "@/lib/subscription";
-import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
-import { classifyPromptIntent, generateConversation, generateCode, ChatMessage } from "@/lib/gemini";
+import { reserveApiLimit, rollbackApiLimit } from "@/lib/api-limit";
+import { classifyPromptIntent, generateConversation, generateCode, GeminiMessage } from "@/lib/gemini";
 import { generateImageWithFallback, generateMusicWithFallback, generateVideo } from "@/lib/media";
 
 export async function POST(req: Request) {
+  let reservedCredit = false;
+  let targetUserId: string | null = null;
+
   try {
     const { userId } = await auth();
     const body = await req.json();
@@ -17,17 +20,24 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    targetUserId = userId;
+
     if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
       return new NextResponse("Prompt is required", { status: 400 });
     }
 
-    const freeTrial = await checkApiLimit();
     const isPro = await checkSubscription();
 
-    if (!freeTrial && !isPro) {
-      return new NextResponse("Free trial has expired. Please upgrade to pro.", {
-        status: 403,
-      });
+    // Atomically reserve a free trial credit up front within a DB transaction.
+    // This strictly eliminates check-then-act race conditions across concurrent requests.
+    if (!isPro) {
+      const hasCredit = await reserveApiLimit(userId);
+      if (!hasCredit) {
+        return new NextResponse("Free trial has expired. Please upgrade to pro.", {
+          status: 403,
+        });
+      }
+      reservedCredit = true;
     }
 
     // Step 1: Manage Conversation Session (Find or Create)
@@ -64,7 +74,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const conversationHistory: ChatMessage[] = pastMessages.reverse().map((msg) => ({
+    const conversationHistory: GeminiMessage[] = pastMessages.reverse().map((msg) => ({
       role: msg.role as "user" | "assistant",
       content: msg.content,
       type: msg.type,
@@ -189,16 +199,8 @@ export async function POST(req: Request) {
       },
     });
 
-    // Update conversation timestamp
-    await prismadb.conversation.update({
-      where: { id: currentConversation.id },
-      data: { updatedAt: new Date() },
-    });
-
-    // Step 4: Increment API Limit for free users
-    if (!isPro) {
-      await incrementApiLimit();
-    }
+    // Note: conversation.updatedAt is managed automatically by Prisma's @updatedAt
+    // directive — no explicit update needed here.
 
     return NextResponse.json({
       conversationId: currentConversation.id,
@@ -206,6 +208,10 @@ export async function POST(req: Request) {
       ...responseData,
     });
   } catch (error: any) {
+    // If generation threw an error before completing, rollback the atomically reserved credit
+    if (reservedCredit && targetUserId) {
+      await rollbackApiLimit(targetUserId);
+    }
     console.error("[OMNIMODAL_CHAT_ERROR]", error);
     return new NextResponse(error?.message || "Internal Server Error", { status: 500 });
   }

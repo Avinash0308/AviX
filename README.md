@@ -1,6 +1,6 @@
 # AviX
-AviX is a state-of-art SaaS (Software as a Service) platform developed using five AI Tools.
-AviX can be used as a daily tool that can ease your life with its various and crazy functionalities.
+AviX (Genius.ai) is a state-of-the-art Omnimodal SaaS (Software as a Service) platform developed uniting five generative AI tools into a single, seamless workspace.
+AviX can be used as a daily creative and technical powerhouse that elevates productivity with conversational reasoning, full-stack code generation, hyper-realistic image synthesis, studio-quality music composition, and cinematic video rendering.
 
 **Project Demo Link:** https://youtu.be/oM1PlYCPZS8
 
@@ -10,37 +10,54 @@ AviX can be used as a daily tool that can ease your life with its various and cr
 
 ## Key Features
 
-- **Conversation :** AviX uses the Gemini API to support general conversational capabilities, allowing users to interact with the platform in a more intuitive, natural language format, enhancing user experience.
+- **Omnimodal Workspace :** AviX consolidates all AI capabilities into a single, unified chat interface—eliminating the need to juggle 5 separate tool subscriptions. Switch between conversations, code requests, image creation, music tracks, and video clips seamlessly in one window with persistent multi-thread history.
 
-- **Code Generation :** Gemini API is leveraged to facilitate code generation in AviX. This integration enables users to generate efficient, contextually relevant code snippets across various programming languages, streamlining the development process.
+- **Conversation :** Powered by Google's Gemini reasoning engine, AviX delivers context-aware, multi-turn conversational intelligence. It supports rich Markdown formatting, interactive tables with 1-click TSV copying, task list checkboxes, and KaTeX mathematical formula rendering.
 
-- **Image Generation :** For image generation, AviX integrates Replicate's models, enabling users to create detailed and customized images from textual descriptions, catering to various creative and professional needs.
+- **Code Generation :** AviX leverages advanced LLM capabilities to synthesize, review, refactor, and debug production-grade code across 40+ programming languages. Outputs feature clean syntax highlighting, language badges, and instantaneous one-click clipboard copying.
 
-- **Music Generation :** Replicate's advanced models are also utilized for music generation. Users can generate original music tracks tailored to specific moods, genres, or themes, offering a versatile tool for music creation.
+- **Image Generation :** AviX integrates state-of-the-art diffusion models via Replicate and Google Imagen to produce hyper-realistic photographs, digital artwork, and marketing visuals from descriptive text prompts, complete with high-resolution download capabilities.
 
-- **Video Generation :** Replicate's models are employed for video generation in AviX, providing users with the ability to create high-quality videos based on their input parameters, making content creation more accessible.
+- **Music Generation :** Powered by neural audio synthesis (Stable Audio via Replicate), users can compose original soundtracks, ambient lo-fi tracks, and soundscapes tailored to custom vibes and moods, played directly via an embedded custom audio player.
+
+- **Video Generation :** AviX utilizes cutting-edge video synthesis models (such as Gen-2 via Replicate) to render dynamic cinematic video clips from text prompts, featuring native video controls, duration indicators, and instant MP4 downloads.
+
+- **Persistent Cloud Media Storage :** Generated media assets are automatically persisted with Cloudinary integration and reliable local fallbacks, ensuring outputs remain permanently accessible across devices and sessions.
+
+- **User Authentication & Privacy :** Built with Clerk, AviX provides secure authentication with social OAuth (Google), email sign-in, multi-factor security, custom dark themes, and multi-layered identity protection.
+
+- **Stripe Subscription & Usage Tracking :** Seamless billing management with Stripe integration. Free tier users receive 5 complimentary generations, with real-time progress tracking and an upgrade flow to AviX Pro for unlimited generations.
 
 <br>
 
 ## Tech Stack
-AviX is smooth, sharp looking, and multi-fuctioning modern day website built to operate with ease. AviX can work on multiple devices as well i.e. you can operate it with any device you have and that even without any bug and glitch.
-Followinng technologies are used to built Tumin: 
+AviX is smooth, sharp looking, and a multi-functioning modern platform built to operate with effortless speed. AviX works seamlessly across desktop, tablet, and mobile devices with a fully responsive layout, collapsible sidebar rails, and mobile drawer navigation.
 
-- **Next.js :** Next.js is a React-based framework that facilitates server-side rendering and static site generation, enhancing the performance and SEO of web applications. It simplifies the development process by offering built-in routing, API routes, and optimized production builds, making it a powerful choice for modern web development.
+Following technologies are used to build AviX:
 
-- **React :** React is a popular JavaScript library for building user interfaces, particularly single-page applications. It allows developers to create reusable UI components, manage state efficiently, and build dynamic, interactive web experiences. React's component-based architecture makes it easier to maintain and scale applications..
+- **Next.js 14 :** Next.js is a React-based full-stack framework leveraging App Router, React Server Components, and optimized API Route Handlers, delivering sub-second response times, server-side rendering, and SEO excellence.
 
-- **Typescript :** TypeScript is a statically typed superset of JavaScript that adds type safety and enhanced tooling. By catching potential errors during development, TypeScript improves code quality and maintainability. It integrates seamlessly with modern JavaScript frameworks like React, ensuring robust and scalable codebases..
+- **React 18 :** React is the industry-standard UI library powering AviX's component-based frontend architecture, utilizing modern hooks and concurrent rendering for smooth interactivity.
 
-- **Tailwind CSS :** Tailwind CSS is a utility-first CSS framework that provides low-level, composable classes to build custom designs without leaving the HTML. It allows for rapid styling and customization, enabling developers to create responsive, consistent, and maintainable user interfaces with minimal CSS code..
+- **TypeScript :** TypeScript provides strict static typing across the entire codebase, eliminating runtime errors, ensuring bulletproof type safety, and improving maintainability.
 
-- **Clerk :** Clerk is a user authentication service that simplifies the process of managing user sign-ups, logins, and sessions in web applications. It provides out-of-the-box authentication, including features like OAuth, passwordless logins, and multi-factor authentication, ensuring secure and seamless user experiences.. 
+- **Tailwind CSS :** Tailwind CSS is a utility-first CSS framework coupled with Radix UI primitives that powers AviX's modern dark theme, glowing aurora effects, glassmorphic cards, and micro-interactions.
 
-- **Stripe :** Stripe is a comprehensive payment gateway solution that facilitates online payments for businesses. It supports a wide range of payment methods and currencies, enabling seamless transactions. In AviX, Stripe is used to handle subscriptions, ensuring secure and efficient payment processing.
+- **Google Generative AI (Gemini) :** The Gemini API powers AviX's high-speed conversational reasoning and multi-language code generation with deep contextual awareness.
 
-- **Prisma ORM :** Prisma is an Object-Relational Mapping (ORM) tool that simplifies database management by allowing developers to interact with databases using a type-safe query language. It integrates smoothly with TypeScript and enables efficient database operations. In AviX, Prisma ORM is used to manage MySQL databases, ensuring smooth data handling and scalability.
+- **Replicate API :** Replicate provides scalable cloud inference for neural AI models powering photo-realistic image synthesis, audio track composition, and cinematic video rendering.
 
-- **MySQL :** MySQL is a widely-used open-source relational database management system known for its reliability, scalability, and performance. It stores and manages data for web applications. In AviX, MySQL is utilized as the primary database to handle large volumes of data efficiently, ensuring the platform’s stability and performance.
+- **Prisma ORM :** Prisma is a next-generation Object-Relational Mapping (ORM) tool providing type-safe database queries, declarative schema migrations, and smooth relation handling.
+
+- **PostgreSQL :** PostgreSQL serves as the primary relational database, storing user generation limits, active Stripe subscriptions, conversation threads, and chat message history.
+
+- **Cloudinary :** Cloudinary provides resilient cloud asset management, media optimization, and permanent storage for generated images, audio files, and video clips.
+
+- **Clerk :** Clerk simplifies authentication, user session security, and account profile management with out-of-the-box OAuth, session tokens, and custom dark theme styling.
+
+- **Stripe :** Stripe handles payment processing, customer billing portals, checkout sessions, and webhook lifecycle events for AviX Pro subscriptions.
+
+- **Zustand :** Zustand provides lightweight, scalable client state management for active generation tracking and chat synchronization across tabs.
 
 <br>
 
@@ -64,7 +81,6 @@ Followinng technologies are used to built Tumin:
 ![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Image.png)
 
 ### Video Generation
-
 ![image](https://github.com/Avinash0308/AviX/blob/main/ReadMe_Images/Video.png)
 
 ### Music Generation
@@ -86,32 +102,77 @@ Followinng technologies are used to built Tumin:
 
 ## Prerequisites
 
-### Install Node JS
-Refer to https://nodejs.org/en/ to install nodejs
+### Install Node.js
+Refer to https://nodejs.org/ to install Node.js (v18.17.0 or higher recommended).
 
-### Install create-react-app
-Install create-react-app npm package globally. This will help to easily run the project and also build the source files easily. Use the following command to install create-react-app
+### Database Setup
+Ensure you have access to a **PostgreSQL** database instance (locally or hosted on Neon, Supabase, etc.).
 
+### API Keys
+Prepare the following API credentials:
+- **Clerk:** Publishable Key & Secret Key
+- **Google Gemini:** API Key
+- **Replicate:** API Token
+- **Stripe:** API Key & Webhook Secret
+- **Cloudinary (Optional):** Cloud Name, API Key, API Secret
+
+<br>
+
+## Cloning and Running the Application in Local
+
+1. **Clone the project into local:**
 ```bash
-npm install -g create-react-app
+git clone https://github.com/Avinash0308/AviX.git
+cd AviX
 ```
 
-## Cloning and Running the Application in local
-
-Clone the project into local
-
-Install all the npm packages. Go into the project folder and type the following command to install all npm packages
-
+2. **Install all dependencies:**
 ```bash
 npm install
 ```
 
-In order to run the application Type the following command
+3. **Configure Environment Variables:**
+Create a `.env.local` file in the root directory by copying `.env.example`:
+```bash
+cp .env.example .env.local
+```
+Fill in your respective API keys and PostgreSQL connection string:
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 
+API_KEY=
+REPLICATE_API_TOKEN=
+
+DATABASE_URL="postgresql://user:password@localhost:5432/avix"
+
+STRIPE_API_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+4. **Sync Database Schema:**
+Generate the Prisma Client and push your database schema:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+5. **Start the Development Server:**
 ```bash
 npm run dev
 ```
 
-The Application Runs on **localhost:3000**
+The Application runs on **http://localhost:3000**
+
+<br>
 
 # Thanks💖

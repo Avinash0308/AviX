@@ -342,7 +342,7 @@ export const LandingContent = () => {
       </section>
 
       {/* SECTION 4: TESTIMONIALS */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="testimonials" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">
             Loved by Developers & Creators

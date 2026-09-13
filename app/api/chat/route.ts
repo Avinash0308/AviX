@@ -6,6 +6,7 @@ import { checkSubscription } from "@/lib/subscription";
 import { reserveApiLimit, rollbackApiLimit } from "@/lib/api-limit";
 import { classifyPromptIntent, generateConversation, generateCode, GeminiMessage } from "@/lib/gemini";
 import { generateImageWithFallback, generateMusicWithFallback, generateVideo } from "@/lib/media";
+import { matchIdentityQuery, sanitizeOutput, maskModelName } from "@/lib/identity-guard";
 
 export async function POST(req: Request) {
   let reservedCredit = false;
@@ -90,7 +91,41 @@ export async function POST(req: Request) {
       },
     });
 
-    // Step 2: Classify Prompt Intent via Gemini Fallback Router with Context Memory
+    // Step 2: Deterministic Identity & Confidentiality Guard (Layer 1 Interceptor)
+    // Intercepts identity, creator, ownership, and backend queries with 0 latency and 100% leak protection
+    const identityMatch = matchIdentityQuery(prompt);
+    if (identityMatch) {
+      const isInitialChat = pastMessages.length <= 1;
+      if (isInitialChat) {
+        await prismadb.conversation.update({
+          where: { id: currentConversation.id },
+          data: { title: identityMatch.title },
+        });
+      }
+
+      const maskedEngine = maskModelName("CONVERSATION");
+      const assistantMsg = await prismadb.message.create({
+        data: {
+          conversationId: currentConversation.id,
+          role: "assistant",
+          content: identityMatch.response,
+          type: "text",
+          modelUsed: maskedEngine,
+        },
+      });
+
+      return NextResponse.json({
+        id: assistantMsg.id,
+        role: "assistant",
+        type: "text",
+        content: identityMatch.response,
+        modelUsed: maskedEngine,
+        conversationTitle: identityMatch.title,
+        createdAt: assistantMsg.createdAt,
+      });
+    }
+
+    // Step 3: Classify Prompt Intent via Gemini Fallback Router with Context Memory
     console.log(`[Omnimodal Chat] Classifying prompt: "${prompt.slice(0, 60)}..."`);
     const classification = await classifyPromptIntent(prompt, conversationHistory);
     console.log(`[Omnimodal Chat] Intent detected: ${classification.category}`);
@@ -120,7 +155,7 @@ export async function POST(req: Request) {
       duration?: number;
     };
 
-    // Step 3: Dispatch to the corresponding specialized model
+    // Step 4: Dispatch to the corresponding specialized model
     switch (classification.category) {
       case "IMAGE": {
         const imageResult = await generateImageWithFallback(classification.extractedPrompt);
@@ -128,7 +163,7 @@ export async function POST(req: Request) {
           type: "image",
           content: classification.extractedPrompt,
           mediaUrl: imageResult.url,
-          modelUsed: imageResult.modelUsed,
+          modelUsed: maskModelName("IMAGE", imageResult.modelUsed),
         };
         break;
       }
@@ -142,7 +177,7 @@ export async function POST(req: Request) {
           type: "audio",
           content: classification.extractedPrompt,
           mediaUrl: musicResult.url,
-          modelUsed: musicResult.modelUsed,
+          modelUsed: maskModelName("MUSIC", musicResult.modelUsed),
           duration: musicResult.duration,
         };
         break;
@@ -154,7 +189,7 @@ export async function POST(req: Request) {
           type: "video",
           content: classification.extractedPrompt,
           mediaUrl: videoResult.url,
-          modelUsed: videoResult.modelUsed,
+          modelUsed: maskModelName("VIDEO", videoResult.modelUsed),
           duration: videoResult.duration,
         };
         break;
@@ -164,8 +199,8 @@ export async function POST(req: Request) {
         const codeResult = await generateCode(prompt, conversationHistory);
         responseData = {
           type: "code",
-          content: codeResult.text,
-          modelUsed: codeResult.modelUsed,
+          content: sanitizeOutput(codeResult.text),
+          modelUsed: maskModelName("CODE", codeResult.modelUsed),
         };
         break;
       }
@@ -175,8 +210,8 @@ export async function POST(req: Request) {
         const convResult = await generateConversation(prompt, conversationHistory);
         responseData = {
           type: "text",
-          content: convResult.text,
-          modelUsed: convResult.modelUsed,
+          content: sanitizeOutput(convResult.text),
+          modelUsed: maskModelName("CONVERSATION", convResult.modelUsed),
         };
         break;
       }

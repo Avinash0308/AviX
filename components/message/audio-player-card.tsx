@@ -25,6 +25,7 @@ export const AudioPlayerCard = ({
   const displayDuration = exactDuration !== null ? exactDuration : duration;
   const isPreview =
     modelUsed?.toLowerCase().includes("riffusion") ||
+    modelUsed?.toLowerCase().includes("preview") ||
     (exactDuration !== null && exactDuration <= 6 && (duration || 0) > 8);
 
   return (

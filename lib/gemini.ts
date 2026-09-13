@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { STRICT_SYSTEM_IDENTITY_RULES, sanitizeOutput } from "./identity-guard";
 
 const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || "";
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -427,14 +428,21 @@ export async function generateConversation(
   prompt: string,
   history: GeminiMessage[] = []
 ): Promise<{ text: string; modelUsed: string }> {
-  const systemInstruction =
-    "You are Genius.ai, an advanced, friendly, and helpful AI assistant. Be concise, articulate, and accurate. When presenting tabular data, lists, or comparisons, format them cleanly using standard GitHub Flavored Markdown tables. When generating checklists or task lists, use markdown task format with empty unchecked boxes (- [ ]) by default so users can tick them off interactively, unless the user explicitly requests items to be pre-checked. When writing mathematical or scientific formulas, format them with LaTeX ($...$ for inline, $$...$$ for blocks). When generating workflows or architecture diagrams, use standard ```mermaid code blocks with double-quoted node labels (e.g. A[\"Step 1 (Details)\"] or B{\"Decision?\"}) and standard arrows with pipe labels (e.g. A -->|label| B) so punctuation parses cleanly. For key takeaways or notes, use blockquotes (> Note: ...). Never refer to yourself as Gemini or mention Google unless explicitly asked about underlying infrastructure.\n\n";
+  const systemInstruction = `You are Genius.ai, an advanced, articulate, and helpful AI assistant created and owned by the Genius.ai Team.
+${STRICT_SYSTEM_IDENTITY_RULES}
+
+Formatting rules:
+- When presenting tabular data, lists, or comparisons, format them cleanly using standard GitHub Flavored Markdown tables.
+- When generating checklists or task lists, use markdown task format with empty unchecked boxes (- [ ]) by default so users can tick them off interactively, unless the user explicitly requests items to be pre-checked.
+- When writing mathematical or scientific formulas, format them with LaTeX ($...$ for inline, $$...$$ for blocks).
+- When generating workflows or architecture diagrams, use standard \`\`\`mermaid code blocks with double-quoted node labels (e.g. A["Step 1 (Details)"] or B{"Decision?"}) and standard arrows with pipe labels (e.g. A -->|label| B) so punctuation parses cleanly.
+- For key takeaways or notes, use blockquotes (> Note: ...).\n\n`;
 
   const contents = buildGeminiContentTurns(systemInstruction, history, prompt);
 
   return await runGeminiWithFallback(async (_modelName, model) => {
     const response = await model.generateContent({ contents });
-    return response.response.text();
+    return sanitizeOutput(response.response.text());
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
 }
 
@@ -445,13 +453,15 @@ export async function generateCode(
   prompt: string,
   history: GeminiMessage[] = []
 ): Promise<{ text: string; modelUsed: string }> {
-  const codingPromptPrefix =
-    "You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer. Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. ```typescript, ```python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully. Never refer to yourself as Gemini or mention Google.\n\n";
+  const codingPromptPrefix = `You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer created by the Genius.ai Team.
+${STRICT_SYSTEM_IDENTITY_RULES}
+
+Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. \`\`\`typescript, \`\`\`python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully.\n\n`;
 
   const contents = buildGeminiContentTurns(codingPromptPrefix, history, prompt);
 
   return await runGeminiWithFallback(async (_modelName, model) => {
     const response = await model.generateContent({ contents });
-    return response.response.text();
+    return sanitizeOutput(response.response.text());
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
 }

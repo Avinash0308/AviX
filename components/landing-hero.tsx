@@ -103,7 +103,7 @@ export function useDarkMode() {
     },
     video: {
       title: "Cinematic AI Video",
-      prompt: "A breathtaking cinematic 8k drone shot of northern lights aurora borealis glowing emerald green over snow-covered fjord mountains at dusk",
+      prompt: "A stylish woman walks down a Tokyo street filled with warm glowing neon and animated city signage, cinematic 35mm film, rainy puddles reflecting neon lights, ultra-realistic motion",
       badge: "Cinematic Motion",
       color: "from-blue-500 to-cyan-600",
       textColor: "text-blue-500",
@@ -130,7 +130,7 @@ export function useDarkMode() {
           <div className="inline-flex items-center gap-x-2 px-3.5 py-1.5 rounded-full glass-pill text-xs font-semibold text-foreground/90 shadow-sm hover:scale-105 transition-transform cursor-default">
             <span className="flex h-2 w-2 rounded-full bg-violet-500 animate-ping" />
             <Sparkles className="w-3.5 h-3.5 text-violet-500" />
-            <span>Genius.ai 2.0 is Live: Next-Gen Omnimodal Studio</span>
+            <span>Genius.ai 2.0 is Live</span>
           </div>
         </div>
 
@@ -484,7 +484,7 @@ export function useDarkMode() {
                     </div>
                     <h3 className="text-lg font-bold text-foreground">Smooth Cinematic Video Synthesis</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Generates continuous cinematic camera motions, aerial landscapes, and atmospheric B-roll directly from prompts.
+                      Generates continuous camera tracking, ultra-realistic motion, and atmospheric cyberpunk lighting directly from prompts.
                     </p>
                     <div className="flex items-center gap-2 pt-2">
                       <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>

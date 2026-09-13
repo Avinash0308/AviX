@@ -135,7 +135,7 @@ export const DashboardLayoutClient = ({
       {/* 1. Desktop Adjustable & Collapsible Sidebar */}
       <aside
         style={{ width: `${currentSidebarWidth}px` }}
-        className={`hidden md:block fixed inset-y-0 left-0 z-50 transition-[width] duration-300 ease-in-out border-r border-black/[0.08] dark:border-white/[0.08] shadow-[4px_0_24px_rgba(0,0,0,0.03)] dark:shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${
+        className={`hidden md:block fixed inset-y-0 left-0 z-50 transition-[width] duration-300 ease-in-out border-r border-border/40 bg-background ${
           isDragging ? "transition-none select-none" : ""
         }`}
       >
@@ -153,11 +153,9 @@ export const DashboardLayoutClient = ({
             <div
               onMouseDown={startResizing}
               onDoubleClick={() => setSidebarWidth(DEFAULT_WIDTH)}
-              className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-500 transition-colors z-50 group"
+              className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-violet-500/20 active:bg-violet-500/40 transition-colors z-50"
               title="Drag to resize sidebar (Double click to reset)"
-            >
-              <div className="w-0.5 h-8 bg-zinc-400 dark:bg-zinc-600 group-hover:bg-violet-500 rounded-full mx-auto mt-48 transition-colors" />
-            </div>
+            />
           )}
         </div>
       </aside>

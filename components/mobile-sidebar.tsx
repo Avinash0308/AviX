@@ -99,7 +99,7 @@ export const MobileSidebar = ({
           // CRITICAL: Prevent Radix FocusScope from stealing focus when user touches Clerk's popover menu
           e.preventDefault();
         }}
-        className="p-0 w-[290px] sm:w-[320px] max-w-[85vw] border-r border-black/[0.08] dark:border-white/[0.08] bg-slate-50 dark:bg-[#090810] text-zinc-900 dark:text-white shadow-2xl focus:outline-none [&>button.absolute]:hidden"
+        className="p-0 w-[290px] sm:w-[320px] max-w-[85vw] border-r border-border/40 bg-background text-foreground shadow-2xl focus:outline-none [&>button.absolute]:hidden"
       >
         <Sidebar
           isPro={isPro}

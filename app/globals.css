@@ -192,13 +192,27 @@ body.is-scrolling * {
   scrollbar-color: rgba(200, 200, 200, 0.28) transparent;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.no-scrollbar::-webkit-scrollbar,
+.no-scrollbar *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.no-scrollbar,
+.no-scrollbar * {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb,
+.no-scrollbar *::-webkit-scrollbar-thumb,
+body.is-scrolling .no-scrollbar::-webkit-scrollbar-thumb,
+.dark body.is-scrolling .no-scrollbar::-webkit-scrollbar-thumb,
+body.is-scrolling .no-scrollbar *::-webkit-scrollbar-thumb,
+.dark body.is-scrolling .no-scrollbar *::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  display: none !important;
 }
 
 /* Ensure Clerk UserButton popover and modals stay above all Radix sheets & overlays */
@@ -213,4 +227,104 @@ body.is-scrolling * {
 [class*="cl-modal"] {
   z-index: 99999 !important;
   pointer-events: auto !important;
+}
+
+/* Prism Syntax Highlighting (Vibrant, high-contrast colors matching reference design) */
+.code-highlight .token.keyword {
+  color: #9333ea;
+  font-weight: 600;
+}
+.dark .code-highlight .token.keyword {
+  color: #c084fc;
+}
+
+.code-highlight .token.function,
+.code-highlight .token.class-name {
+  color: #2563eb;
+  font-weight: 500;
+}
+.dark .code-highlight .token.function,
+.dark .code-highlight .token.class-name {
+  color: #60a5fa;
+}
+
+.code-highlight .token.number,
+.code-highlight .token.boolean {
+  color: #ea580c;
+  font-weight: 500;
+}
+.dark .code-highlight .token.number,
+.dark .code-highlight .token.boolean {
+  color: #fb923c;
+}
+
+.code-highlight .token.string,
+.code-highlight .token.char {
+  color: #16a34a;
+}
+.dark .code-highlight .token.string,
+.dark .code-highlight .token.char {
+  color: #4ade80;
+}
+
+.code-highlight .token.comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+.dark .code-highlight .token.comment {
+  color: #64748b;
+}
+
+.code-highlight .token.operator {
+  color: #d946ef;
+}
+.dark .code-highlight .token.operator {
+  color: #f0abfc;
+}
+
+.code-highlight .token.punctuation {
+  color: #475569;
+}
+.dark .code-highlight .token.punctuation {
+  color: #94a3b8;
+}
+
+.code-highlight .token.property,
+.code-highlight .token.tag,
+.code-highlight .token.constant {
+  color: #0891b2;
+}
+.dark .code-highlight .token.property,
+.dark .code-highlight .token.tag,
+.dark .code-highlight .token.constant {
+  color: #22d3ee;
+}
+
+.code-highlight .token.variable {
+  color: #1e293b;
+}
+.dark .code-highlight .token.variable {
+  color: #f1f5f9;
+}
+
+/* Prevent Mermaid internal syntax error elements from leaking into body background */
+[id^="dmermaid"],
+[id*="mermaid-error"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Interactive task checklist styling */
+.prose ul.contains-task-list {
+  padding-left: 0 !important;
+  list-style: none !important;
+}
+
+.prose li.task-list-item {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+
+.prose li.task-list-item::before {
+  display: none !important;
 }

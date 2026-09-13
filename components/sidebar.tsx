@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import {
   Plus,
+  Edit,
   MessageSquare,
   Trash2,
   Settings,
@@ -193,11 +194,7 @@ export const Sidebar = ({
   const isCompact = Boolean(isCollapsed);
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-b from-slate-50 via-white to-zinc-50 dark:from-[#0f0c1b] dark:via-[#090810] dark:to-[#050508] text-zinc-900 dark:text-white select-none border-r border-black/[0.08] dark:border-white/[0.08] shadow-[4px_0_24px_rgba(0,0,0,0.03)] dark:shadow-[4px_0_30px_rgba(0,0,0,0.5)]">
-      {/* Subtle Ambient Violet/Purple Lighting */}
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-purple-500/[0.08] dark:from-purple-600/[0.12] via-violet-500/[0.03] dark:via-violet-600/[0.04] to-transparent pointer-events-none" />
-      <div className="absolute -top-12 -left-12 w-44 h-44 bg-violet-500/[0.08] dark:bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-violet-500/[0.05] dark:from-violet-600/[0.08] via-indigo-500/[0.02] dark:via-indigo-600/[0.02] to-transparent pointer-events-none" />
+    <div className="relative w-full h-full overflow-hidden bg-background text-foreground select-none border-r border-border/40">
 
       {/* ========================================== */}
       {/* 1. MINIMIZED / COMPACT RAIL VIEW (68px)   */}
@@ -228,10 +225,10 @@ export const Sidebar = ({
             {/* New Chat Button */}
             <button
               onClick={onNewChat}
-              className="w-10 h-10 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 hover:border-purple-500/40 flex items-center justify-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-white transition group cursor-pointer mt-1 shadow-sm"
+              className="w-10 h-10 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition group cursor-pointer mt-1"
               title="New chat"
             >
-              <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
+              <Edit className="w-4 h-4" />
             </button>
 
             {/* Recent Chats Button */}
@@ -280,7 +277,7 @@ export const Sidebar = ({
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-1 max-h-[50vh] pr-0.5 no-scrollbar">
+              <div className="flex-1 overflow-y-auto space-y-1 max-h-[50vh] pr-0.5 no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {isLoadingHistory ? (
                   <div className="flex items-center justify-center py-6 text-zinc-500 text-xs gap-2">
                     <Loader2 className="w-3.5 h-3.5 animate-spin text-violet-500 dark:text-violet-400" />
@@ -297,7 +294,7 @@ export const Sidebar = ({
                       className={cn(
                         "flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium transition group",
                         activeChatId === chat.id
-                          ? "bg-violet-500/15 dark:bg-white/15 text-zinc-900 dark:text-white font-semibold border border-violet-500/30"
+                          ? "bg-gradient-to-r from-violet-100/90 via-purple-50/90 to-violet-100/60 dark:from-violet-500/25 dark:via-purple-500/15 dark:to-white/[0.02] border border-violet-400/60 dark:border-violet-500/35 text-zinc-900 dark:text-white font-semibold shadow-xs"
                           : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
                       )}
                     >
@@ -391,7 +388,7 @@ export const Sidebar = ({
         )}
       >
         {/* 1. Top Header: Brand Logo & Collapse Toggle */}
-        <div className="p-3 pb-2.5 relative z-10 border-b border-black/[0.06] dark:border-white/[0.07] bg-white/70 dark:bg-[#0f0c1b]/60 backdrop-blur-xl shrink-0">
+        <div className="p-3 pb-2.5 relative z-10 border-b border-border/40 bg-background shrink-0">
           <div className="flex items-center justify-between mb-3 px-0.5 py-0.5 w-full flex-nowrap gap-1">
             {/* Brand Mark matching user screenshot */}
             <div className="flex items-center gap-1.5 shrink-0">
@@ -436,21 +433,23 @@ export const Sidebar = ({
             )}
           </div>
 
-          {/* 2. "+ New Chat" Button */}
+          {/* 2. "New chat" Clean Minimalist Row */}
           <button
             onClick={onNewChat}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/[0.07] hover:bg-violet-50/80 dark:hover:bg-violet-600/20 hover:border-violet-400/50 dark:hover:border-violet-500/40 text-sm font-medium transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-violet-500/10 text-zinc-800 dark:text-white"
+            className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer group"
           >
-            <div className="flex items-center gap-2">
-              <Plus className="w-4 h-4 text-violet-600 dark:text-violet-400 group-hover:rotate-90 transition-transform duration-200" />
-              <span className="group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">New chat</span>
+            <div className="flex items-center gap-2.5">
+              <Edit className="w-4 h-4 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+              <span>New chat</span>
             </div>
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono group-hover:text-zinc-800 dark:group-hover:text-zinc-200 border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded-md">⌘K</span>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono group-hover:text-zinc-600 dark:group-hover:text-zinc-300">
+              ⌘K
+            </span>
           </button>
         </div>
 
         {/* 3. Chat History List (Middle Scrollable Area) */}
-        <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-1 no-scrollbar relative z-10">
+        <div className="flex-1 overflow-y-auto px-2.5 py-2 space-y-1 no-scrollbar relative z-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="px-2 pt-2.5 pb-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
             Recent Chats
           </div>
@@ -477,7 +476,7 @@ export const Sidebar = ({
                   className={cn(
                     "group flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer relative",
                     isActive
-                      ? "bg-gradient-to-r from-violet-500/15 via-purple-500/10 to-violet-500/5 dark:from-violet-500/25 dark:via-purple-500/15 dark:to-white/[0.02] border border-violet-500/30 dark:border-violet-500/35 text-zinc-900 dark:text-white font-semibold shadow-sm"
+                      ? "bg-gradient-to-r from-violet-100/90 via-purple-50/90 to-violet-100/60 dark:from-violet-500/25 dark:via-purple-500/15 dark:to-white/[0.02] border border-violet-400/60 dark:border-violet-500/35 text-zinc-900 dark:text-white font-semibold shadow-xs shadow-violet-500/10"
                       : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
                   )}
                 >
@@ -513,7 +512,7 @@ export const Sidebar = ({
         </div>
 
         {/* 4. Bottom Section: Upgrade to Pro, Settings & Account Profile */}
-        <div className="p-3 border-t border-black/[0.06] dark:border-white/[0.08] space-y-2.5 bg-white/80 dark:bg-[#090810] backdrop-blur-xl relative z-10 shrink-0">
+        <div className="p-3 border-t border-border/40 space-y-2.5 bg-background relative z-10 shrink-0">
           {/* Upgrade to Pro Counter - Automatically removed when isPro is true */}
           <FreeCounter apiLimitCount={apiLimitCount} isPro={isPro} />
 

@@ -1,104 +1,80 @@
 "use client";
 
 import Image from "next/image";
-import { MessageSquare, Code, ImageIcon, Music, VideoIcon } from "lucide-react";
 
 interface OmnimodalEmptyProps {
-  onSelectPrompt: (prompt: string) => void;
+  userName?: string;
+  children?: React.ReactNode;
 }
 
-const SUGGESTIONS = [
-  {
-    icon: MessageSquare,
-    label: "Ask a Question",
-    prompt: "Explain how neural networks learn in simple intuitive terms",
-    color: "text-violet-500",
-    bg: "bg-violet-500/10 hover:bg-violet-500/20 border-violet-500/20",
-  },
-  {
-    icon: Code,
-    label: "Generate Code",
-    prompt: "Write a reusable debounce hook in React with TypeScript",
-    color: "text-green-500",
-    bg: "bg-green-500/10 hover:bg-green-500/20 border-green-500/20",
-  },
-  {
-    icon: ImageIcon,
-    label: "Create Photo",
-    prompt: "RAW 35mm photo of an artisan crafting a mechanical watch in Tokyo",
-    color: "text-pink-500",
-    bg: "bg-pink-500/10 hover:bg-pink-500/20 border-pink-500/20",
-  },
-  {
-    icon: Music,
-    label: "Compose Music",
-    prompt: "Compose a 15-second acoustic jazz piano melody with soft drums",
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20",
-  },
-  {
-    icon: VideoIcon,
-    label: "Render Video",
-    prompt: "Cinematic video of ocean waves crashing against black volcanic rocks",
-    color: "text-orange-500",
-    bg: "bg-orange-500/10 hover:bg-orange-500/20 border-orange-500/20",
-  },
-];
-
-export const OmnimodalEmpty = ({ onSelectPrompt }: OmnimodalEmptyProps) => {
+export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center px-3 pt-6 pb-6 sm:py-6 md:p-8 max-w-4xl mx-auto text-center my-0 md:my-auto">
-      {/* Animated Glowing Brand Logo Badge */}
-      <div className="relative mb-3.5 sm:mb-6 shrink-0 mt-1 sm:mt-0">
-        {/* Intense Multi-Layer Ambient Glow Aura */}
-        <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 opacity-70 blur-2xl -z-10 animate-pulse" />
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 opacity-40 blur-lg -z-10" />
+    <div className="relative w-full h-full flex flex-col items-center justify-center px-4 py-8 animate-in fade-in duration-500 overflow-visible">
+      {/* ========================================================================= */}
+      {/* Bilateral Ambient Aurora: Dense at text box ends, soft & gentle in middle */}
+      {/* ========================================================================= */}
 
-        {/* Vibrant Gradient Badge with Intense Shadow */}
-        <div className="relative w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 flex items-center justify-center p-3 sm:p-3.5 shadow-lg shadow-violet-500/40 animate-pulse">
+      {/* --- DARK MODE --- */}
+      <div className="absolute inset-0 pointer-events-none z-0 hidden dark:block overflow-visible">
+        {/* 1. Broad Ambient Base (Smooth continuous illumination centered on input & greeting) */}
+        <div className="absolute top-[60%] sm:top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] sm:w-[1000px] h-[280px] sm:h-[340px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.13)_0%,_rgba(109,40,217,0.07)_45%,_transparent_75%)] blur-[60px]" />
+
+        {/* 2. Middle Glow (Visible violet aura directly behind headline & pill box center) */}
+        <div className="absolute top-[58%] sm:top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[620px] h-[190px] sm:h-[230px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(147,51,234,0.18)_0%,_rgba(124,58,237,0.10)_50%,_transparent_75%)] blur-[50px]" />
+
+        {/* 3. Left Wing Glow (Denser violet saturation at left end of text box) */}
+        <div className="absolute top-[60%] sm:top-[62%] left-[calc(50%-180px)] sm:left-[calc(50%-240px)] -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[420px] h-[190px] sm:h-[240px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(168,85,247,0.24)_0%,_rgba(139,92,246,0.12)_50%,_transparent_75%)] blur-[45px]" />
+
+        {/* 4. Right Wing Glow (Denser violet saturation at right end of text box) */}
+        <div className="absolute top-[60%] sm:top-[62%] left-[calc(50%+180px)] sm:left-[calc(50%+240px)] -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[420px] h-[190px] sm:h-[240px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(168,85,247,0.24)_0%,_rgba(139,92,246,0.12)_50%,_transparent_75%)] blur-[45px]" />
+      </div>
+
+      {/* --- LIGHT MODE --- */}
+      <div className="absolute inset-0 pointer-events-none z-0 dark:hidden overflow-visible">
+        {/* 1. Broad Ambient Base */}
+        <div className="absolute top-[60%] sm:top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] sm:w-[1000px] h-[280px] sm:h-[340px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(196,181,253,0.55)_0%,_rgba(221,214,254,0.30)_45%,_transparent_75%)] blur-[60px]" />
+
+        {/* 2. Middle Glow */}
+        <div className="absolute top-[58%] sm:top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[620px] h-[190px] sm:h-[230px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(167,139,250,0.50)_0%,_rgba(196,181,253,0.25)_50%,_transparent_75%)] blur-[50px]" />
+
+        {/* 3. Left Wing Glow */}
+        <div className="absolute top-[60%] sm:top-[62%] left-[calc(50%-180px)] sm:left-[calc(50%-240px)] -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[420px] h-[190px] sm:h-[240px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(147,51,234,0.48)_0%,_rgba(167,139,250,0.28)_50%,_transparent_75%)] blur-[45px]" />
+
+        {/* 4. Right Wing Glow */}
+        <div className="absolute top-[60%] sm:top-[62%] left-[calc(50%+180px)] sm:left-[calc(50%+240px)] -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[420px] h-[190px] sm:h-[240px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(147,51,234,0.48)_0%,_rgba(167,139,250,0.28)_50%,_transparent_75%)] blur-[45px]" />
+      </div>
+
+      {/* Brand Logo Badge with Radiant Colored Glow for Light & Dark Mode */}
+      <div className="relative mb-6 sm:mb-8 z-10 -translate-y-2">
+        {/* Outer Radiant Glow Aura (Pure colored gradient emission, zero dark/black shadow) */}
+        <div className="absolute -inset-2.5 rounded-3xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 opacity-60 dark:opacity-75 blur-xl -z-10 animate-pulse" />
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-500 to-pink-500 opacity-40 dark:opacity-50 blur-md -z-10" />
+
+        {/* Vibrant Gradient Badge with Luminous Color Ring */}
+        <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 flex items-center justify-center p-3 sm:p-3.5 shadow-[0_0_20px_rgba(168,85,247,0.35)] dark:shadow-[0_0_25px_rgba(168,85,247,0.5)]">
           <div className="relative w-full h-full">
             <Image
               src="/logo.png"
-              alt="Genius.ai Logo"
+              alt="AviX Logo"
               fill
-              className="object-contain filter brightness-0 invert drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]"
+              className="object-contain filter brightness-0 invert drop-shadow-[0_0_8px_rgba(255,255,255,0.75)]"
               priority
             />
           </div>
         </div>
       </div>
 
-      <h2 className="text-lg sm:text-2xl md:text-4xl font-extrabold tracking-tight mb-1.5 sm:mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 shrink-0">
-        What would you like to create?
-      </h2>
-      <p className="text-muted-foreground text-xs sm:text-sm md:text-base max-w-lg mb-4 sm:mb-8 shrink-0">
-        <span className="sm:hidden">Chat, write code, create images, music & video.</span>
-        <span className="hidden sm:inline">Converse freely, write production code, render real-life photos, compose music, or create cinematic videos—all in this single conversation.</span>
-      </p>
+      {/* Refined Sizing Greeting Headline */}
+      <h1 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground text-center mb-6 sm:mb-8 leading-snug select-none">
+        {userName ? `Hi ${userName}, how can I help you today?` : "Hi there, how can I help you today?"}
+      </h1>
 
-      {/* Suggestion Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 w-full text-left">
-        {SUGGESTIONS.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <button
-              key={index}
-              onClick={() => onSelectPrompt(item.prompt)}
-              className={`p-3 sm:p-4 rounded-xl border transition-all duration-200 group text-left cursor-pointer hover:shadow-md hover:-translate-y-0.5 ${item.bg}`}
-            >
-              <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${item.color}`} />
-                <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground">
-                  {item.label}
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm font-medium text-foreground/90 line-clamp-2">
-                &ldquo;{item.prompt}&rdquo;
-              </p>
-            </button>
-          );
-        })}
-      </div>
+      {/* Centered Input Form Container */}
+      {children && (
+        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 
+import { useUser } from "@clerk/nextjs";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useGenerationStore } from "@/hooks/use-generation-store";
 import { OmnimodalEmpty } from "@/components/omnimodal-empty";
@@ -31,7 +32,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const ROTATING_PLACEHOLDERS = [
+  "Ask anything, write code, or create images, music & video",
+  "Write a reusable React debounce hook with TypeScript",
+  "Generate an 8K cinematic photo of an artisan in Tokyo",
+  "Compose a 15-second acoustic jazz piano soundtrack",
+  "Render a cinematic 4K video of rainy Tokyo at night",
+  "Explain quantum computing or debug Python code",
+];
+
 export const OmnimodalChat = () => {
+  const { user } = useUser();
+  const userName = user?.firstName || (user?.fullName ? user.fullName.split(" ")[0] : "");
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeChatId = searchParams?.get("id");
@@ -43,14 +55,16 @@ export const OmnimodalChat = () => {
   const editFormRef = useRef<HTMLFormElement>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [chatTitle, setChatTitle] = useState("New Conversation");
+  const [chatTitle, setChatTitle] = useState("");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingTitleText, setEditingTitleText] = useState("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("Genius.ai is thinking...");
   const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
-  const [placeholderText, setPlaceholderText] = useState("Ask anything or create media...");
+  const [typedText, setTypedText] = useState(ROTATING_PLACEHOLDERS[0]);
+  const [showCursor, setShowCursor] = useState(true);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const newlyCreatedChatIdRef = useRef<string | null>(null);
@@ -74,18 +88,61 @@ export const OmnimodalChat = () => {
     };
   }, []);
 
+  // Blinking cursor interval (coming and going every 530ms)
   useEffect(() => {
-    const updatePlaceholder = () => {
-      if (typeof window !== "undefined" && window.innerWidth >= 640) {
-        setPlaceholderText("Ask anything, write code, or create images, music & video...");
+    if (messages.length > 0 || isInputFocused) return;
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 530);
+    return () => clearInterval(cursorInterval);
+  }, [messages.length, isInputFocused]);
+
+  // Live Typewriter Effect for Empty Chat State
+  useEffect(() => {
+    if (messages.length > 0 || isInputFocused) return;
+
+    let promptIdx = 0;
+    let charIdx = ROTATING_PLACEHOLDERS[0].length;
+    let isDeleting = true;
+    let timer: NodeJS.Timeout;
+
+    const tick = () => {
+      const current = ROTATING_PLACEHOLDERS[promptIdx];
+
+      if (!isDeleting) {
+        setTypedText(current.substring(0, charIdx + 1));
+        charIdx++;
+
+        if (charIdx === current.length) {
+          isDeleting = true;
+          timer = setTimeout(tick, 2500);
+          return;
+        }
+        timer = setTimeout(tick, 45);
       } else {
-        setPlaceholderText("Ask anything or create media...");
+        setTypedText(current.substring(0, charIdx - 1));
+        charIdx--;
+
+        if (charIdx === 0) {
+          isDeleting = false;
+          promptIdx = (promptIdx + 1) % ROTATING_PLACEHOLDERS.length;
+          timer = setTimeout(tick, 450);
+          return;
+        }
+        timer = setTimeout(tick, 20);
       }
     };
-    updatePlaceholder();
-    window.addEventListener("resize", updatePlaceholder);
-    return () => window.removeEventListener("resize", updatePlaceholder);
-  }, []);
+
+    timer = setTimeout(tick, 2500);
+
+    return () => clearTimeout(timer);
+  }, [messages.length, isInputFocused]);
+
+  const displayPlaceholder = isInputFocused
+    ? ""
+    : messages.length === 0
+    ? `${typedText}${showCursor ? "|" : ""}`
+    : "Ask a follow-up, write code, or create media...";
 
   useEffect(() => {
     currentChatIdRef.current = activeChatId;
@@ -240,6 +297,21 @@ export const OmnimodalChat = () => {
       )}px`;
     }
   };
+
+  // Copy prompt text to input box and focus textarea for editing
+  const handleEditPrompt = useCallback((promptText: string) => {
+    setInput(promptText);
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.height = `${Math.min(
+          textareaRef.current.scrollHeight,
+          180
+        )}px`;
+      }
+    }, 50);
+  }, []);
 
   const startEditingTitle = () => {
     setEditingTitleText(chatTitle);
@@ -401,6 +473,9 @@ export const OmnimodalChat = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 50);
     setIsLoading(true);
 
     // If starting from a new conversation, track that it was initiated locally
@@ -444,6 +519,47 @@ export const OmnimodalChat = () => {
       onSubmit();
     }
   };
+
+  const renderInputForm = (isCentered = false) => (
+    <form
+      onSubmit={onSubmit}
+      className={cn(
+        "pointer-events-auto relative flex items-center rounded-full border border-zinc-300/85 dark:border-zinc-700/80 bg-zinc-100/95 dark:bg-[#181a20]/95 backdrop-blur-md shadow-md shadow-black/5 dark:shadow-black/30 focus-within:border-violet-500/70 focus-within:ring-2 focus-within:ring-violet-500/20 focus-within:bg-background dark:focus-within:bg-[#1c1e25] transition-all pl-5 sm:pl-6 pr-2 py-1.5 sm:py-2 gap-2 w-full",
+        isCentered && "shadow-xl shadow-black/5 dark:shadow-black/40"
+      )}
+    >
+      <textarea
+        ref={textareaRef}
+        rows={1}
+        value={input}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setIsInputFocused(true)}
+        onBlur={() => setIsInputFocused(false)}
+        disabled={isLoading}
+        placeholder={displayPlaceholder}
+        className="flex-1 max-h-44 resize-none bg-transparent px-1 py-1.5 text-sm text-foreground dark:text-white placeholder:text-zinc-500 dark:placeholder:text-zinc-200/95 placeholder:truncate focus:outline-none leading-relaxed font-normal"
+      />
+
+      <button
+        type="submit"
+        disabled={!input.trim() || isLoading}
+        className={cn(
+          "w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all flex items-center justify-center shrink-0",
+          !input.trim() || isLoading
+            ? "bg-secondary text-muted-foreground cursor-not-allowed opacity-50"
+            : "bg-gradient-to-tr from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-md shadow-violet-500/30 cursor-pointer hover:scale-105 active:scale-95"
+        )}
+        title="Send prompt"
+      >
+        {isLoading ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <Send className="w-4 h-4 ml-0.5" />
+        )}
+      </button>
+    </form>
+  );
 
   return (
     <div className="flex flex-col h-full max-w-5xl mx-auto px-2 md:px-6 relative">
@@ -571,89 +687,64 @@ export const OmnimodalChat = () => {
         </div>
       )}
 
-      {/* Main Message Stream */}
-      <div
-        onScroll={handleScroll}
-        className={cn(
-          "flex-1 min-h-0 pl-1 pr-3 sm:pr-4 md:pr-6",
-          isScrolling && "is-scrolling",
-          messages.length > 0
-            ? "overflow-y-auto py-2 space-y-4"
-            : "overflow-y-auto no-scrollbar flex flex-col justify-start md:justify-center py-2"
-        )}
-      >
+      {/* Messages & Floating Input Container */}
+      <div className="relative flex-1 min-h-0 flex flex-col">
         {isLoadingChat || (activeChatId && messages.length === 0) ? (
-          <div className="flex flex-col items-center justify-center h-64 gap-2.5 text-muted-foreground text-sm">
+          <div className="flex flex-col items-center justify-center h-full gap-2.5 text-muted-foreground text-sm">
             <Loader2 className="w-5 h-5 animate-spin text-violet-500" />
             <span className="text-xs font-medium text-muted-foreground">Loading conversation...</span>
           </div>
         ) : messages.length === 0 ? (
-          <OmnimodalEmpty onSelectPrompt={(p) => setInput(p)} />
-        ) : (
-          messages.map((message) => (
-            <OmnimodalMessage key={message.id} message={message} />
-          ))
-        )}
-
-        {/* Dynamic Loading State Card */}
-        {!isLoadingChat && isLoading && (
-          <div className="w-full flex justify-start">
-            <div className="flex items-start gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[85%]">
-              <div className="flex-shrink-0 mt-0.5">
-                <BotAvatar />
-              </div>
-              <div className="w-fit flex items-center gap-3 px-4 py-3 rounded-2xl rounded-tl-xs bg-card dark:bg-zinc-900/90 border border-border/80 shadow-sm animate-pulse">
-                <Loader2 className="w-4 h-4 text-violet-500 animate-spin shrink-0" />
-                <span className="text-xs md:text-sm font-medium text-muted-foreground">
-                  {loadingStatus}
-                </span>
-              </div>
-            </div>
+          /* Empty Chat State: Elevated slightly for optimal optical centering */
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0 w-full pb-10 sm:pb-16">
+            <OmnimodalEmpty userName={userName}>
+              {renderInputForm(true)}
+            </OmnimodalEmpty>
           </div>
+        ) : (
+          /* Active Chat Stream with Input at Bottom */
+          <>
+            <div
+              onScroll={handleScroll}
+              className={cn(
+                "h-full overflow-y-auto pl-1 pr-3 sm:pr-4 md:pr-6 pb-28 md:pb-36 py-2 space-y-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-120px),rgba(0,0,0,0.25)_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_calc(100%-120px),rgba(0,0,0,0.25)_100%)]",
+                isScrolling && "is-scrolling"
+              )}
+            >
+              {messages.map((message) => (
+                <OmnimodalMessage
+                  key={message.id}
+                  message={message}
+                  onEditPrompt={handleEditPrompt}
+                />
+              ))}
+
+              {/* Dynamic Loading State Card */}
+              {!isLoadingChat && isLoading && (
+                <div className="w-full flex justify-start">
+                  <div className="flex items-start gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[85%]">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <BotAvatar />
+                    </div>
+                    <div className="w-fit flex items-center gap-3 px-4 py-3 rounded-2xl rounded-tl-xs bg-card dark:bg-zinc-900/90 border border-border/80 shadow-sm animate-pulse">
+                      <Loader2 className="w-4 h-4 text-violet-500 animate-spin shrink-0" />
+                      <span className="text-xs md:text-sm font-medium text-muted-foreground">
+                        {loadingStatus}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div ref={scrollRef} className="h-4" />
+            </div>
+
+            {/* Floating Omnimodal Prompt Input Bar at Bottom */}
+            <div className="absolute bottom-4 md:bottom-6 left-0 right-0 px-1 pointer-events-none">
+              {renderInputForm(false)}
+            </div>
+          </>
         )}
-
-        <div ref={scrollRef} />
-      </div>
-
-      {/* Floating Omnimodal Prompt Input Bar */}
-      <div className="pt-2 pb-3 shrink-0 bg-gradient-to-t from-background via-background to-transparent">
-        {/* Input Box Container */}
-        <form
-          onSubmit={onSubmit}
-          className="relative flex items-end rounded-2xl border border-border/80 bg-background/80 backdrop-blur-xl shadow-lg focus-within:border-violet-500/60 focus-within:ring-2 focus-within:ring-violet-500/20 transition-all p-2 gap-2"
-        >
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            disabled={isLoading}
-            placeholder={placeholderText}
-            className="flex-1 max-h-44 resize-none bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/70 placeholder:truncate focus:outline-none leading-relaxed"
-          />
-
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${!input.trim() || isLoading
-                ? "bg-secondary text-muted-foreground cursor-not-allowed opacity-50"
-                : "bg-gradient-to-tr from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-md shadow-violet-500/30 cursor-pointer hover:scale-105 active:scale-95"
-              }`}
-            title="Send prompt"
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </button>
-        </form>
-
-        <div className="flex items-center justify-between mt-2 px-2 text-[10px] sm:text-[11px] text-muted-foreground">
-          <span className="truncate pr-2">Next-generation multi-modal AI studio</span>
-          <span className="hidden sm:inline shrink-0">Shift + Enter for new line</span>
-        </div>
       </div>
     </div>
   );

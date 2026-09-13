@@ -100,46 +100,53 @@ export async function generateMusicWithFallback(
   prompt: string,
   requestedDuration?: number
 ): Promise<MediaGenerationResult> {
-  // Clamping duration: default 10 seconds, user-requested clamped strictly between 5s and 30s
-  const duration = Math.min(Math.max(requestedDuration || 10, 5), 30);
+  // Duration: user-requested or default 15s, clamped between 5s and 30s as integer
+  const duration = Math.round(Math.min(Math.max(requestedDuration || 15, 5), 30));
 
-  // Priority 1: Meta's MusicGen (~$0.006 per 10s, authentic studio instruments)
-  try {
-    console.log(
-      `[Media Engine] Generating ${duration}s audio track with meta/musicgen...`
-    );
-    const output: any = await replicate.run(
-      "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
-      {
-        input: {
-          prompt: String(prompt),
-          duration,
-          model_version: "stereo-large",
-          output_format: "mp3",
-          normalization_strategy: "loudness",
-        },
+  // Priority 1: Meta's MusicGen (supports exact duration from 5s to 30s)
+  // Attempt with stereo-melody-large first (fastest, default), then stereo-large if needed
+  const modelVersions = ["stereo-melody-large", "stereo-large"];
+  for (let i = 0; i < modelVersions.length; i++) {
+    const version = modelVersions[i];
+    try {
+      console.log(
+        `[Media Engine] Generating ${duration}s audio track with meta/musicgen (${version})...`
+      );
+      const output: any = await replicate.run(
+        "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
+        {
+          input: {
+            prompt: String(prompt),
+            duration,
+            model_version: version,
+            output_format: "mp3",
+            normalization_strategy: "loudness",
+          },
+        }
+      );
+
+      const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
+      const persistentAudio = await persistMedia(audioUrl, "audio");
+
+      return {
+        url: persistentAudio,
+        modelUsed: `meta/musicgen (${version})`,
+        duration,
+      };
+    } catch (musicgenError: any) {
+      console.warn(
+        `[Media Engine] MusicGen (${version}) failed: ${musicgenError?.message || musicgenError}`
+      );
+      if (i < modelVersions.length - 1) {
+        // Brief pause before trying secondary version to clear any burst throttle
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
-    );
-
-    const audioUrl = typeof output === "string" ? output : (output as any)?.audio || output;
-    const persistentAudio = await persistMedia(audioUrl, "audio");
-
-    return {
-      url: persistentAudio,
-      modelUsed: "meta/musicgen",
-      duration,
-    };
-  } catch (musicgenError: any) {
-    console.warn(
-      `[Media Engine] MusicGen failed (${musicgenError?.message || musicgenError}). Waiting for rate-limit reset before Riffusion fallback...`
-    );
-    // Wait 3.5s to respect Replicate's 429 burst rate limit before fallback request
-    await new Promise((resolve) => setTimeout(resolve, 3500));
+    }
   }
 
-  // Priority 2: Riffusion Emergency Fallback
+  // Priority 2: Riffusion Emergency Fallback (Generates fixed ~5 second audio loop)
   try {
-    console.log("[Media Engine] Generating audio with riffusion/riffusion emergency fallback...");
+    console.log("[Media Engine] MusicGen unavailable. Generating with riffusion/riffusion emergency fallback...");
     const output: any = await replicate.run(
       "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
       {
@@ -155,7 +162,7 @@ export async function generateMusicWithFallback(
     return {
       url: persistentAudio,
       modelUsed: "riffusion/riffusion",
-      duration: 8,
+      duration: 5,
     };
   } catch (riffusionError: any) {
     throw new Error(

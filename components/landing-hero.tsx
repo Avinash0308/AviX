@@ -166,7 +166,7 @@ export function useDarkMode() {
             <Link href={isSignedIn ? "/dashboard" : "/sign-up"} className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="w-full sm:w-auto px-8 py-6 rounded-full text-base font-semibold bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white shadow-xl shadow-purple-500/25 border-0 hover:scale-105 active:scale-95 transition-all group"
+                className="w-full sm:w-auto h-auto min-h-[3.25rem] px-8 py-4 sm:py-5 rounded-full text-base font-semibold bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white shadow-xl shadow-purple-500/25 border-0 hover:scale-105 active:scale-95 transition-all group"
               >
                 <Zap className="w-5 h-5 mr-2 fill-white group-hover:scale-110 transition-transform" />
                 Start Creating For Free
@@ -178,7 +178,7 @@ export function useDarkMode() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto px-7 py-6 rounded-full text-base font-semibold glass-pill hover:bg-black/5 dark:hover:bg-white/10 transition-all hover:scale-105"
+                className="w-full sm:w-auto h-auto min-h-[3.25rem] px-7 py-4 sm:py-5 rounded-full text-base font-semibold glass-pill hover:bg-black/5 dark:hover:bg-white/10 transition-all hover:scale-105"
               >
                 <SlidersHorizontal className="w-4 h-4 mr-2 text-muted-foreground" />
                 Explore Interactive Demo

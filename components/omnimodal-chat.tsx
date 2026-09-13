@@ -36,13 +36,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const ROTATING_PLACEHOLDERS = [
+const DESKTOP_PLACEHOLDERS = [
   "Ask anything, write code, or create images, music & video",
   "Write a reusable React debounce hook with TypeScript",
   "Generate an 8K cinematic photo of an artisan in Tokyo",
   "Compose a 15-second acoustic jazz piano soundtrack",
   "Render a cinematic 4K video of rainy Tokyo at night",
   "Explain quantum computing or debug Python code",
+];
+
+const MOBILE_PLACEHOLDERS = [
+  "Ask anything, code, or create...",
+  "Generate an 8K photo in Tokyo...",
+  "Write a React debounce hook...",
+  "Compose a jazz soundtrack...",
+  "Render a cinematic 4K video...",
+  "Explain quantum computing...",
 ];
 
 export const OmnimodalChat = () => {
@@ -66,7 +75,8 @@ export const OmnimodalChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(DEFAULT_LOADING_STATUS);
   const [isLoadingChat, setIsLoadingChat] = useState(() => !!activeChatId);
-  const [typedText, setTypedText] = useState(ROTATING_PLACEHOLDERS[0]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [typedText, setTypedText] = useState(MOBILE_PLACEHOLDERS[0]);
   const [showCursor, setShowCursor] = useState(true);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -79,6 +89,18 @@ export const OmnimodalChat = () => {
   const prevNewChatSignalRef = useRef(newChatSignal);
   const newlyCreatedChatIdRef = useRef<string | null>(null);
   const currentChatIdRef = useRef<string | null | undefined>(activeChatId);
+
+  // Detect mobile screen for concise 1-line placeholders
+  useEffect(() => {
+    const handleResize = () => {
+      const mob = window.innerWidth < 640;
+      setIsMobile(mob);
+      setTypedText((mob ? MOBILE_PLACEHOLDERS : DESKTOP_PLACEHOLDERS)[0]);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleScroll = useCallback(() => {
     setIsScrolling(true);
@@ -111,13 +133,14 @@ export const OmnimodalChat = () => {
   useEffect(() => {
     if (messages.length > 0 || input.length > 0) return;
 
+    const placeholders = isMobile ? MOBILE_PLACEHOLDERS : DESKTOP_PLACEHOLDERS;
     let promptIdx = 0;
-    let charIdx = ROTATING_PLACEHOLDERS[0].length;
+    let charIdx = placeholders[0].length;
     let isDeleting = true;
     let timer: NodeJS.Timeout;
 
     const tick = () => {
-      const current = ROTATING_PLACEHOLDERS[promptIdx];
+      const current = placeholders[promptIdx % placeholders.length];
 
       if (!isDeleting) {
         setTypedText(current.substring(0, charIdx + 1));
@@ -135,7 +158,7 @@ export const OmnimodalChat = () => {
 
         if (charIdx === 0) {
           isDeleting = false;
-          promptIdx = (promptIdx + 1) % ROTATING_PLACEHOLDERS.length;
+          promptIdx = (promptIdx + 1) % placeholders.length;
           timer = setTimeout(tick, 450);
           return;
         }
@@ -146,11 +169,13 @@ export const OmnimodalChat = () => {
     timer = setTimeout(tick, 2500);
 
     return () => clearTimeout(timer);
-  }, [messages.length, input.length]);
+  }, [messages.length, input.length, isMobile]);
 
   const displayPlaceholder =
     messages.length === 0
       ? `${typedText}${showCursor ? "|" : ""}`
+      : isMobile
+      ? "Ask a follow-up..."
       : "Ask a follow-up, write code, or create media...";
 
   useEffect(() => {
@@ -583,11 +608,16 @@ export const OmnimodalChat = () => {
     }
   };
 
+  const isMultiline = input.includes("\n") || input.length > 45;
+
   const renderInputForm = (isCentered = false) => (
     <form
       onSubmit={onSubmit}
       className={cn(
-        "pointer-events-auto relative flex items-center rounded-full border border-zinc-300/85 dark:border-zinc-700/80 bg-zinc-100/95 dark:bg-[#181a20]/95 backdrop-blur-md shadow-md shadow-black/5 dark:shadow-black/30 focus-within:border-violet-500/70 focus-within:ring-2 focus-within:ring-violet-500/20 focus-within:bg-background dark:focus-within:bg-[#1c1e25] transition-all pl-5 sm:pl-6 pr-2 py-1.5 sm:py-2 gap-2 w-full",
+        "pointer-events-auto relative flex border border-zinc-300/85 dark:border-zinc-700/80 bg-zinc-100/95 dark:bg-[#181a20]/95 backdrop-blur-md shadow-md shadow-black/5 dark:shadow-black/30 focus-within:border-violet-500/70 focus-within:ring-2 focus-within:ring-violet-500/20 focus-within:bg-background dark:focus-within:bg-[#1c1e25] transition-all pl-5 sm:pl-6 pr-2 gap-2 w-full",
+        isMultiline
+          ? "rounded-2xl sm:rounded-3xl items-end py-2"
+          : "rounded-full items-center py-1.5 sm:py-2",
         isCentered && "shadow-xl shadow-black/5 dark:shadow-black/40"
       )}
     >
@@ -610,6 +640,7 @@ export const OmnimodalChat = () => {
         disabled={!input.trim() || isLoading}
         className={cn(
           "w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all flex items-center justify-center shrink-0",
+          isMultiline && "self-end mb-0.5",
           !input.trim() || isLoading
             ? "bg-secondary text-muted-foreground cursor-not-allowed opacity-50"
             : "bg-gradient-to-tr from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-md shadow-violet-500/30 cursor-pointer hover:scale-105 active:scale-95"
@@ -771,7 +802,7 @@ export const OmnimodalChat = () => {
             <div
               onScroll={handleScroll}
               className={cn(
-                "h-full overflow-y-auto pl-1 pr-3 sm:pr-4 md:pr-6 pb-36 sm:pb-36 md:pb-40 py-2 space-y-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)]",
+                "h-full overflow-y-auto px-3 sm:px-4 md:px-6 pb-36 sm:pb-36 md:pb-40 py-2 space-y-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_calc(100%-48px),transparent_100%)]",
                 isScrolling && "is-scrolling"
               )}
             >
@@ -786,8 +817,8 @@ export const OmnimodalChat = () => {
               {/* Dynamic Loading State Card */}
               {!isLoadingChat && isLoading && (
                 <div className="w-full flex justify-start">
-                  <div className="flex items-start gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[85%]">
-                    <div className="flex-shrink-0 mt-0.5">
+                  <div className="flex items-start gap-0 sm:gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[85%]">
+                    <div className="flex-shrink-0 mt-0.5 hidden sm:block">
                       <BotAvatar />
                     </div>
                     <div className="w-fit flex items-center gap-3 px-4 py-3 rounded-2xl rounded-tl-xs bg-card dark:bg-zinc-900/90 border border-border/80 shadow-sm animate-pulse">

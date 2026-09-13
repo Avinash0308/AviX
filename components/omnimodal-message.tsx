@@ -230,13 +230,13 @@ export const OmnimodalMessage = ({ message, onEditPrompt }: OmnimodalMessageProp
 
   if (isUser) {
     return (
-      <div className="group w-full flex justify-end pr-1 sm:pr-1.5">
-        <div className="flex items-start gap-2.5 md:gap-3 max-w-[85%] sm:max-w-[75%] flex-row-reverse">
-          <div className="flex-shrink-0 mt-0.5">
+      <div className="group w-full flex justify-end">
+        <div className="flex items-start gap-0 sm:gap-2.5 md:gap-3 max-w-[92%] sm:max-w-[75%] flex-row-reverse">
+          <div className="flex-shrink-0 mt-0.5 hidden sm:block">
             <UserAvatar />
           </div>
           <div className="flex flex-col items-end max-w-full">
-            <div className="w-fit max-w-full rounded-[28px] rounded-tr-[2px] bg-violet-600/10 dark:bg-violet-500/20 border border-violet-500/25 dark:border-violet-500/35 px-5 py-3 shadow-xs">
+            <div className="w-fit max-w-full rounded-2xl rounded-tr-none bg-violet-600/10 dark:bg-violet-500/20 border border-violet-500/25 dark:border-violet-500/35 px-4 py-2.5 sm:px-5 sm:py-3 shadow-xs">
               <div className="prose prose-sm dark:prose-invert max-w-none break-words text-sm leading-relaxed text-foreground">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
@@ -299,8 +299,8 @@ export const OmnimodalMessage = ({ message, onEditPrompt }: OmnimodalMessageProp
 
   return (
     <div className="group w-full flex justify-start py-1">
-      <div className="flex items-start gap-3 w-full">
-        <div className="flex-shrink-0 mt-1">
+      <div className="flex items-start gap-0 sm:gap-3 w-full">
+        <div className="flex-shrink-0 mt-1 hidden sm:block">
           <BotAvatar />
         </div>
 
@@ -430,27 +430,27 @@ export const OmnimodalMessage = ({ message, onEditPrompt }: OmnimodalMessageProp
               {message.content && (
                 <p className="text-xs text-muted-foreground italic">&ldquo;{message.content}&rdquo;</p>
               )}
-              <div className="rounded-xl overflow-hidden border border-border/80 bg-zinc-950 shadow-md">
+              <div className="rounded-xl overflow-hidden border border-border/80 dark:border-white/10 bg-zinc-950 shadow-md">
                 <video src={rawMediaUrl} controls playsInline className="w-full aspect-video object-cover" />
-                <div className="p-2.5 bg-secondary/30 flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Film className="w-3.5 h-3.5 text-orange-400" />
+                <div className="p-2.5 bg-zinc-900/95 border-t border-white/10 flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-zinc-300 font-medium">
+                    <Film className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                     720p HD Cinematic (24fps)
                   </span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onCopyMedia(rawMediaUrl, "video")}
-                      className="flex items-center gap-1 text-xs text-foreground/80 hover:text-foreground font-medium transition cursor-pointer px-1.5 py-0.5 rounded hover:bg-secondary/60"
+                      className="flex items-center gap-1 text-xs text-zinc-200 hover:text-white font-medium transition cursor-pointer px-2 py-1 rounded-md hover:bg-white/10"
                       title="Copy video link"
                     >
                       {copiedMedia === "video" ? (
                         <>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                          <span className="text-emerald-500">Copied</span>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400 font-medium">Copied</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3 h-3" />
+                          <Copy className="w-3.5 h-3.5 text-zinc-300" />
                           <span>Copy</span>
                         </>
                       )}
@@ -460,10 +460,10 @@ export const OmnimodalMessage = ({ message, onEditPrompt }: OmnimodalMessageProp
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs text-foreground/80 hover:text-foreground font-medium transition"
+                      className="flex items-center gap-1 text-xs text-zinc-200 hover:text-white font-medium transition px-2 py-1 rounded-md hover:bg-white/10 cursor-pointer"
                     >
-                      <Download className="w-3 h-3" />
-                      Download MP4
+                      <Download className="w-3.5 h-3.5 text-zinc-300" />
+                      <span>Download MP4</span>
                     </a>
                   </div>
                 </div>

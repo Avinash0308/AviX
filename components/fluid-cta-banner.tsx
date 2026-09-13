@@ -367,7 +367,7 @@ export const FluidCtaBanner = ({ isSignedIn }: FluidCtaBannerProps) => {
     <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div
         ref={containerRef}
-        className="relative rounded-3xl overflow-hidden p-8 sm:p-14 text-center border border-slate-200/80 dark:border-white/10 shadow-2xl shadow-violet-500/5 dark:shadow-black/40 cursor-crosshair transition-all duration-300 group select-none backdrop-blur-2xl bg-white/80 dark:bg-slate-900/40"
+        className="relative rounded-3xl overflow-hidden px-6 py-10 sm:p-14 text-center border border-slate-200/80 dark:border-white/10 shadow-2xl shadow-violet-500/5 dark:shadow-black/40 cursor-crosshair transition-all duration-300 group select-none backdrop-blur-2xl bg-white/80 dark:bg-slate-900/40"
       >
         {/* Dynamic Frosted Liquid Canvas */}
         <canvas
@@ -415,11 +415,11 @@ export const FluidCtaBanner = ({ isSignedIn }: FluidCtaBannerProps) => {
             <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
               <Button
                 size="lg"
-                className="rounded-full px-8 py-6 text-base font-bold bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white shadow-xl shadow-purple-500/25 hover:scale-105 hover:shadow-purple-500/40 transition-all group/btn border-0"
+                className="h-auto min-h-[3.25rem] rounded-full px-7 sm:px-9 py-4 sm:py-5 text-sm sm:text-base font-bold bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white shadow-xl shadow-purple-500/25 hover:scale-105 hover:shadow-purple-500/40 transition-all group/btn border-0"
               >
-                <Sparkles className="w-4 h-4 mr-2 fill-white/80 group-hover/btn:rotate-12 transition-transform" />
-                Get Started For Free
-                <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                <Sparkles className="w-4 h-4 mr-2 shrink-0 fill-white/80 group-hover/btn:rotate-12 transition-transform" />
+                <span className="leading-snug">Get Started For Free</span>
+                <ArrowRight className="w-4 h-4 ml-2 shrink-0 group-hover/btn:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>

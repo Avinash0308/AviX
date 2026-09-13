@@ -63,7 +63,7 @@ export const LandingNavbar = () => {
       {/* Mobile Menu Backdrop */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity animate-in fade-in duration-200"
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity animate-in fade-in duration-200"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -75,7 +75,8 @@ export const LandingNavbar = () => {
             "w-full flex items-center justify-between pointer-events-auto transition-all duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]",
             isScrolled
               ? "max-w-3xl h-12 sm:h-13 py-1.5 sm:py-2 px-3 sm:px-6 rounded-full backdrop-blur-2xl backdrop-saturate-150 bg-white/60 dark:bg-slate-950/60 border border-black/10 dark:border-white/15 shadow-[0_12px_36px_0_rgba(0,0,0,0.1),inset_0_1px_1px_0_rgba(255,255,255,0.7)] dark:shadow-[0_16px_48px_0_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.15)]"
-              : "max-w-6xl mx-auto h-14 sm:h-15 py-2 px-3.5 sm:px-7 rounded-2xl sm:rounded-full backdrop-blur-2xl backdrop-saturate-150 bg-white/55 dark:bg-slate-950/55 border border-black/10 dark:border-white/12 shadow-[0_8px_30px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_10px_35px_0_rgba(0,0,0,0.45),inset_0_1px_1px_0_rgba(255,255,255,0.12)]"
+              : "max-w-6xl mx-auto h-14 sm:h-15 py-2 px-3.5 sm:px-7 rounded-2xl sm:rounded-full backdrop-blur-2xl backdrop-saturate-150 bg-white/55 dark:bg-slate-950/55 border border-black/10 dark:border-white/12 shadow-[0_8px_30px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_10px_35px_0_rgba(0,0,0,0.45),inset_0_1px_1px_0_rgba(255,255,255,0.12)]",
+            mobileMenuOpen && "bg-white dark:bg-slate-950 border-black/10 dark:border-white/20 shadow-2xl"
           )}
         >
           {/* Brand Logo & Links */}
@@ -117,7 +118,7 @@ export const LandingNavbar = () => {
           {/* Desktop Navigation Links */}
           <nav
             className={cn(
-              "hidden md:flex items-center font-medium text-muted-foreground whitespace-nowrap flex-nowrap shrink-0 transition-all duration-300",
+              "hidden lg:flex items-center font-medium text-muted-foreground whitespace-nowrap flex-nowrap shrink-0 transition-all duration-300",
               isScrolled ? "gap-x-5 text-xs" : "gap-x-7 text-sm"
             )}
           >
@@ -166,7 +167,7 @@ export const LandingNavbar = () => {
                     "transition-all duration-300 inline-block",
                     isScrolled
                       ? "opacity-0 max-w-0 -mr-2 pointer-events-none overflow-hidden"
-                      : "opacity-100 max-w-[90px] hidden md:inline-block"
+                      : "opacity-100 max-w-[90px] hidden lg:inline-block"
                   )}
                 >
                   <Button variant="ghost" size="sm" className="rounded-full font-medium hover:bg-black/5 dark:hover:bg-white/10 px-3">
@@ -189,10 +190,15 @@ export const LandingNavbar = () => {
               </div>
             )}
 
-            {/* Mobile Hamburger Button (Toggles menu open / closed) */}
+            {/* Mobile / Tablet Hamburger Button (Toggles menu open / closed) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 hover:bg-white/80 dark:hover:bg-slate-800/80 text-foreground transition-all hover:scale-105 active:scale-95 shrink-0"
+              className={cn(
+                "lg:hidden flex items-center justify-center w-9 h-9 rounded-full border border-black/10 dark:border-white/10 text-foreground transition-all hover:scale-105 active:scale-95 shrink-0",
+                mobileMenuOpen
+                  ? "bg-slate-100 dark:bg-slate-800"
+                  : "bg-white/50 dark:bg-slate-900/50 hover:bg-white/80 dark:hover:bg-slate-800/80"
+              )}
               aria-label={mobileMenuOpen ? "Close Navigation Menu" : "Open Navigation Menu"}
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -200,9 +206,9 @@ export const LandingNavbar = () => {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu Card */}
+        {/* Mobile / Tablet Dropdown Menu Card */}
         {mobileMenuOpen && (
-          <div className="md:hidden fixed top-[72px] sm:top-[80px] left-3 right-3 sm:left-6 sm:right-6 max-w-md mx-auto rounded-3xl border border-black/10 dark:border-white/15 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl p-5 space-y-4 shadow-2xl shadow-black/25 dark:shadow-black/75 pointer-events-auto animate-in fade-in slide-in-from-top-3 duration-200 z-50">
+          <div className="lg:hidden fixed top-[72px] sm:top-[80px] left-3 right-3 sm:left-6 sm:right-6 max-w-md mx-auto rounded-3xl border border-black/10 dark:border-white/15 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl p-5 space-y-4 shadow-2xl shadow-black/25 dark:shadow-black/75 pointer-events-auto animate-in fade-in slide-in-from-top-3 duration-200 z-50">
             <div className="flex flex-col space-y-1">
               {navLinks.map((link) => (
                 <a

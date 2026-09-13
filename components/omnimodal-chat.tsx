@@ -100,16 +100,16 @@ export const OmnimodalChat = () => {
 
   // Blinking cursor interval (coming and going every 530ms)
   useEffect(() => {
-    if (messages.length > 0 || isInputFocused) return;
+    if (messages.length > 0 || input.length > 0) return;
     const cursorInterval = setInterval(() => {
       setShowCursor((prev) => !prev);
     }, 530);
     return () => clearInterval(cursorInterval);
-  }, [messages.length, isInputFocused]);
+  }, [messages.length, input.length]);
 
   // Live Typewriter Effect for Empty Chat State
   useEffect(() => {
-    if (messages.length > 0 || isInputFocused) return;
+    if (messages.length > 0 || input.length > 0) return;
 
     let promptIdx = 0;
     let charIdx = ROTATING_PLACEHOLDERS[0].length;
@@ -146,13 +146,11 @@ export const OmnimodalChat = () => {
     timer = setTimeout(tick, 2500);
 
     return () => clearTimeout(timer);
-  }, [messages.length, isInputFocused]);
+  }, [messages.length, input.length]);
 
   const displayPlaceholder =
     messages.length === 0
-      ? isInputFocused
-        ? "Ask Genius.ai anything..."
-        : `${typedText}${showCursor ? "|" : ""}`
+      ? `${typedText}${showCursor ? "|" : ""}`
       : "Ask a follow-up, write code, or create media...";
 
   useEffect(() => {
@@ -289,6 +287,9 @@ export const OmnimodalChat = () => {
     }
 
     // Auto-focus the text box so user typing goes directly to input
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+    });
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 50);
@@ -297,6 +298,9 @@ export const OmnimodalChat = () => {
   // Auto-focus input when on a new conversation screen
   useEffect(() => {
     if (!activeChatId && !isLoadingChat) {
+      requestAnimationFrame(() => {
+        textareaRef.current?.focus();
+      });
       setTimeout(() => {
         textareaRef.current?.focus();
       }, 50);
@@ -324,6 +328,8 @@ export const OmnimodalChat = () => {
 
       if (!isLoading && textareaRef.current) {
         textareaRef.current.focus();
+        e.preventDefault();
+        setInput((prev) => prev + e.key);
       }
     };
 
@@ -587,6 +593,7 @@ export const OmnimodalChat = () => {
     >
       <textarea
         ref={textareaRef}
+        id="chat-input"
         rows={1}
         value={input}
         onChange={handleInputChange}
@@ -595,7 +602,7 @@ export const OmnimodalChat = () => {
         onBlur={() => setIsInputFocused(false)}
         disabled={isLoading}
         placeholder={displayPlaceholder}
-        className="flex-1 max-h-44 resize-none bg-transparent px-1 py-1.5 text-sm text-foreground dark:text-white placeholder:text-zinc-500 dark:placeholder:text-zinc-200/95 placeholder:truncate focus:outline-none leading-relaxed font-normal"
+        className="flex-1 max-h-44 resize-none bg-transparent px-1 py-1.5 text-sm text-foreground dark:text-white placeholder:text-zinc-500 dark:placeholder:text-zinc-300 focus:outline-none leading-relaxed font-normal"
       />
 
       <button

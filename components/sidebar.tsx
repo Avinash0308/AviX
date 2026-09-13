@@ -115,8 +115,12 @@ export const Sidebar = ({
   const onNewChat = useCallback(() => {
     router.push("/chat");
     useChatSyncStore.getState().triggerNewChat();
-    if (typeof window !== "undefined" && window.innerWidth < 768 && onToggleCollapse) {
-      onToggleCollapse();
+    if (typeof window !== "undefined") {
+      const chatInput = document.getElementById("chat-input") as HTMLTextAreaElement | null;
+      chatInput?.focus();
+      if (window.innerWidth < 768 && onToggleCollapse) {
+        onToggleCollapse();
+      }
     }
   }, [router, onToggleCollapse]);
 

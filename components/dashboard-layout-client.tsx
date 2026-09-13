@@ -141,6 +141,10 @@ export const DashboardLayoutClient = ({
               onClick={() => {
                 router.push("/chat");
                 useChatSyncStore.getState().triggerNewChat();
+                if (typeof window !== "undefined") {
+                  const chatInput = document.getElementById("chat-input") as HTMLTextAreaElement | null;
+                  chatInput?.focus();
+                }
               }}
               className="p-1.5 rounded-lg border border-border/60 bg-secondary/50 hover:bg-secondary text-foreground transition-all cursor-pointer"
               title="New chat"

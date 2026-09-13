@@ -148,11 +148,12 @@ export const OmnimodalChat = () => {
     return () => clearTimeout(timer);
   }, [messages.length, isInputFocused]);
 
-  const displayPlaceholder = isInputFocused
-    ? ""
-    : messages.length === 0
-    ? `${typedText}${showCursor ? "|" : ""}`
-    : "Ask a follow-up, write code, or create media...";
+  const displayPlaceholder =
+    messages.length === 0
+      ? isInputFocused
+        ? "Ask Genius.ai anything..."
+        : `${typedText}${showCursor ? "|" : ""}`
+      : "Ask a follow-up, write code, or create media...";
 
   useEffect(() => {
     currentChatIdRef.current = activeChatId;
@@ -286,7 +287,49 @@ export const OmnimodalChat = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
+
+    // Auto-focus the text box so user typing goes directly to input
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 50);
   }, [newChatSignal]);
+
+  // Auto-focus input when on a new conversation screen
+  useEffect(() => {
+    if (!activeChatId && !isLoadingChat) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 50);
+    }
+  }, [activeChatId, isLoadingChat]);
+
+  // Direct typing to text box when user types without focus on another interactive element
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.closest("[role='dialog']") ||
+          target.closest("[role='menu']"))
+      ) {
+        return;
+      }
+
+      // Ignore modifier keys and non-printable keys
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+
+      if (!isLoading && textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [isLoading]);
 
   // Auto-scroll to bottom whenever messages update or loading starts
   useEffect(() => {

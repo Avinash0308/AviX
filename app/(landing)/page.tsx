@@ -1,8 +1,16 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
 import { LandingNavbar } from "@/components/landing-navbar";
 import { LandingHero } from "@/components/landing-hero";
 import { LandingContent } from "@/components/landing-content";
 
-const LandingPage = () => {
+const LandingPage = async () => {
+  const { userId } = await auth();
+
+  if (userId) {
+    redirect("/dashboard");
+  }
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background Aurora Radial Gradients */}

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const { prompt, conversationId } = body;
+    const { prompt, conversationId, userTimeZone } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -196,7 +196,7 @@ export async function POST(req: Request) {
       }
 
       case "CODE": {
-        const codeResult = await generateCode(prompt, conversationHistory);
+        const codeResult = await generateCode(prompt, conversationHistory, userTimeZone);
         responseData = {
           type: "code",
           content: sanitizeOutput(codeResult.text),
@@ -207,7 +207,7 @@ export async function POST(req: Request) {
 
       case "CONVERSATION":
       default: {
-        const convResult = await generateConversation(prompt, conversationHistory);
+        const convResult = await generateConversation(prompt, conversationHistory, userTimeZone);
         responseData = {
           type: "text",
           content: sanitizeOutput(convResult.text),

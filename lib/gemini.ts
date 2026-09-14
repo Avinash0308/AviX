@@ -421,14 +421,51 @@ export function buildGeminiContentTurns(
   return contents;
 }
 
+export function getCurrentDateTimeContext(timeZone?: string): string {
+  const now = new Date();
+  let validTimeZone = timeZone;
+  if (validTimeZone) {
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone: validTimeZone });
+    } catch {
+      validTimeZone = undefined;
+    }
+  }
+
+  const dateFormatted = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: validTimeZone || "UTC",
+  });
+
+  const timeFormatted = now.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZone: validTimeZone || "UTC",
+    timeZoneName: "short",
+  });
+
+  const tzNotice = validTimeZone ? `(User Time Zone: ${validTimeZone})` : `(UTC)`;
+
+  return `Current Date & Time: ${dateFormatted}, ${timeFormatted} ${tzNotice}.
+Always use this real-time timestamp when answering questions regarding the current day, date, time, month, or year.`;
+}
+
 /**
  * Generate conversational response using Gemini fallback chain with full multi-turn memory
  */
 export async function generateConversation(
   prompt: string,
-  history: GeminiMessage[] = []
+  history: GeminiMessage[] = [],
+  userTimeZone?: string
 ): Promise<{ text: string; modelUsed: string }> {
+  const dateTimeContext = getCurrentDateTimeContext(userTimeZone);
   const systemInstruction = `You are Genius.ai, an advanced, articulate, and helpful AI assistant created and owned by the Genius.ai Team.
+${dateTimeContext}
 ${STRICT_SYSTEM_IDENTITY_RULES}
 
 Formatting rules:
@@ -451,9 +488,12 @@ Formatting rules:
  */
 export async function generateCode(
   prompt: string,
-  history: GeminiMessage[] = []
+  history: GeminiMessage[] = [],
+  userTimeZone?: string
 ): Promise<{ text: string; modelUsed: string }> {
+  const dateTimeContext = getCurrentDateTimeContext(userTimeZone);
   const codingPromptPrefix = `You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer created by the Genius.ai Team.
+${dateTimeContext}
 ${STRICT_SYSTEM_IDENTITY_RULES}
 
 Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. \`\`\`typescript, \`\`\`python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully.\n\n`;
@@ -465,3 +505,4 @@ Provide clean, efficient, bug-free, and production-ready code with appropriate l
     return sanitizeOutput(response.response.text());
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
 }
+

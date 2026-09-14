@@ -66,9 +66,11 @@ export const useGenerationStore = create<GenerationStore>((set, get) => ({
     const sync = useChatSyncStore.getState();
 
     try {
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const response = await axios.post("/api/chat", {
         prompt,
         conversationId: chatId,
+        userTimeZone,
       });
 
       const assistantMessage: ChatMessage = {

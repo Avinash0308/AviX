@@ -9,7 +9,7 @@ interface OmnimodalEmptyProps {
 
 export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center px-3 sm:px-4 py-2 sm:py-8 my-auto animate-in fade-in duration-500 overflow-visible">
+    <div className="relative w-full h-full flex flex-col items-center justify-center max-sm:px-0 sm:px-4 py-2 sm:py-8 my-auto animate-in fade-in duration-500 overflow-visible">
       {/* ========================================================================= */}
       {/* Bilateral Ambient Aurora: Dense at text box ends, soft & gentle in middle */}
       {/* ========================================================================= */}
@@ -65,13 +65,13 @@ export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
       </div>
 
       {/* Refined Sizing Greeting Headline */}
-      <h1 className="relative z-10 text-base sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground text-center mb-4 sm:mb-8 px-2 leading-snug select-none">
+      <h1 className="relative z-10 text-base sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground text-center mb-4 sm:mb-8 max-sm:px-4 px-2 leading-snug select-none">
         {userName ? `Hi ${userName}, how can I help you today?` : "Hi there, how can I help you today?"}
       </h1>
 
       {/* Centered Input Form Container */}
       {children && (
-        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl">
+        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl max-sm:px-4">
           {children}
         </div>
       )}

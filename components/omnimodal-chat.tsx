@@ -662,7 +662,12 @@ export const OmnimodalChat = () => {
   );
 
   return (
-    <div className="flex flex-col h-full max-w-5xl mx-auto px-2 md:px-6 relative">
+    <div
+      className={cn(
+        "flex flex-col h-full max-w-5xl mx-auto sm:px-2 md:px-6 relative",
+        messages.length > 0 ? "max-sm:px-2" : "max-sm:px-0"
+      )}
+    >
       {/* Top Header Bar: Conversation Title on Left + 3-Dot Dropdown on Right */}
       {messages.length > 0 && (
         <div className="flex items-center justify-between py-2 px-1 border-b border-border/40 shrink-0 mb-1">
@@ -796,7 +801,7 @@ export const OmnimodalChat = () => {
           </div>
         ) : messages.length === 0 ? (
           /* Empty Chat State: Elevated slightly for optimal optical centering */
-          <div className="flex-1 flex flex-col items-center justify-center min-h-0 w-full px-2 sm:px-4 py-2 sm:pb-16 overflow-y-auto sm:overflow-visible">
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0 w-full max-sm:px-0 sm:px-4 py-2 sm:pb-16 overflow-y-auto max-sm:overflow-x-hidden sm:overflow-visible">
             <OmnimodalEmpty userName={userName}>
               {renderInputForm(true)}
             </OmnimodalEmpty>

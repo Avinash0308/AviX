@@ -451,8 +451,9 @@ export function getCurrentDateTimeContext(timeZone?: string): string {
 
   const tzNotice = validTimeZone ? `(User Time Zone: ${validTimeZone})` : `(UTC)`;
 
-  return `Current Date & Time: ${dateFormatted}, ${timeFormatted} ${tzNotice}.
-Always use this real-time timestamp when answering questions regarding the current day, date, time, month, or year.`;
+  return `[System Temporal Context - INTERNAL REFERENCE ONLY]:
+Current Date & Time: ${dateFormatted}, ${timeFormatted} ${tzNotice}.
+STRICT DIRECTIVE: This temporal reference is strictly for internal grounding. DO NOT mention, state, or cite the current date, time, day, or year unless the user explicitly asks for it in their prompt. Never include it proactively in greetings, explanations, or responses.`;
 }
 
 /**
@@ -465,8 +466,15 @@ export async function generateConversation(
 ): Promise<{ text: string; modelUsed: string }> {
   const dateTimeContext = getCurrentDateTimeContext(userTimeZone);
   const systemInstruction = `You are Genius.ai, an advanced, articulate, and helpful AI assistant created and owned by the Genius.ai Team.
-${dateTimeContext}
+
 ${STRICT_SYSTEM_IDENTITY_RULES}
+
+${dateTimeContext}
+
+IMPORTANT INTERACTION & DIRECTNESS RULES:
+- DO NOT introduce yourself as Genius.ai or start responses with greetings like "I am Genius.ai...", "I'm Genius.ai...", or mention who created you, unless the user explicitly asks who you are or what your name is.
+- DO NOT state or print the current date, time, or timestamp unless specifically asked by the user.
+- Start your response immediately with the direct, substantive answer to the user's question.
 
 Formatting rules:
 - When presenting tabular data, lists, or comparisons, format them cleanly using standard GitHub Flavored Markdown tables.
@@ -479,7 +487,7 @@ Formatting rules:
 
   return await runGeminiWithFallback(async (_modelName, model) => {
     const response = await model.generateContent({ contents });
-    return sanitizeOutput(response.response.text());
+    return sanitizeOutput(response.response.text(), prompt);
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
 }
 
@@ -493,8 +501,15 @@ export async function generateCode(
 ): Promise<{ text: string; modelUsed: string }> {
   const dateTimeContext = getCurrentDateTimeContext(userTimeZone);
   const codingPromptPrefix = `You are Genius.ai Code Studio, an expert Senior Full-Stack Software Engineer created by the Genius.ai Team.
-${dateTimeContext}
+
 ${STRICT_SYSTEM_IDENTITY_RULES}
+
+${dateTimeContext}
+
+IMPORTANT INTERACTION & DIRECTNESS RULES:
+- DO NOT introduce yourself as Genius.ai or start responses with greetings like "I am Genius.ai...", "I'm Genius.ai...", or mention who created you, unless the user explicitly asks who you are or what your name is.
+- DO NOT state or print the current date, time, or timestamp unless specifically asked by the user.
+- Start your response immediately with the requested code or engineering solution.
 
 Provide clean, efficient, bug-free, and production-ready code with appropriate language markdown blocks (e.g. \`\`\`typescript, \`\`\`python, etc.). Include concise explanations for key design decisions and handle edge cases gracefully.\n\n`;
 
@@ -502,7 +517,7 @@ Provide clean, efficient, bug-free, and production-ready code with appropriate l
 
   return await runGeminiWithFallback(async (_modelName, model) => {
     const response = await model.generateContent({ contents });
-    return sanitizeOutput(response.response.text());
+    return sanitizeOutput(response.response.text(), prompt);
   }).then(({ result, modelUsed }) => ({ text: result, modelUsed }));
 }
 

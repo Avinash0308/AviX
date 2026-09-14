@@ -199,7 +199,7 @@ export async function POST(req: Request) {
         const codeResult = await generateCode(prompt, conversationHistory, userTimeZone);
         responseData = {
           type: "code",
-          content: sanitizeOutput(codeResult.text),
+          content: sanitizeOutput(codeResult.text, prompt),
           modelUsed: maskModelName("CODE", codeResult.modelUsed),
         };
         break;
@@ -210,7 +210,7 @@ export async function POST(req: Request) {
         const convResult = await generateConversation(prompt, conversationHistory, userTimeZone);
         responseData = {
           type: "text",
-          content: sanitizeOutput(convResult.text),
+          content: sanitizeOutput(convResult.text, prompt),
           modelUsed: maskModelName("CONVERSATION", convResult.modelUsed),
         };
         break;

@@ -313,10 +313,10 @@ export const OmnimodalChat = () => {
 
     // Auto-focus the text box so user typing goes directly to input
     requestAnimationFrame(() => {
-      textareaRef.current?.focus();
+      textareaRef.current?.focus({ preventScroll: true });
     });
     setTimeout(() => {
-      textareaRef.current?.focus();
+      textareaRef.current?.focus({ preventScroll: true });
     }, 50);
   }, [newChatSignal]);
 
@@ -324,10 +324,10 @@ export const OmnimodalChat = () => {
   useEffect(() => {
     if (!activeChatId && !isLoadingChat) {
       requestAnimationFrame(() => {
-        textareaRef.current?.focus();
+        textareaRef.current?.focus({ preventScroll: true });
       });
       setTimeout(() => {
-        textareaRef.current?.focus();
+        textareaRef.current?.focus({ preventScroll: true });
       }, 50);
     }
   }, [activeChatId, isLoadingChat]);
@@ -352,7 +352,7 @@ export const OmnimodalChat = () => {
       if (e.key.length !== 1) return;
 
       if (!isLoading && textareaRef.current) {
-        textareaRef.current.focus();
+        textareaRef.current.focus({ preventScroll: true });
         e.preventDefault();
         setInput((prev) => prev + e.key);
       }
@@ -384,7 +384,7 @@ export const OmnimodalChat = () => {
     setInput(promptText);
     setTimeout(() => {
       if (textareaRef.current) {
-        textareaRef.current.focus();
+        textareaRef.current.focus({ preventScroll: true });
         textareaRef.current.style.height = "auto";
         textareaRef.current.style.height = `${Math.min(
           textareaRef.current.scrollHeight,
@@ -562,7 +562,7 @@ export const OmnimodalChat = () => {
       textareaRef.current.style.height = "auto";
     }
     setTimeout(() => {
-      textareaRef.current?.focus();
+      textareaRef.current?.focus({ preventScroll: true });
     }, 50);
     setIsLoading(true);
 
@@ -628,7 +628,12 @@ export const OmnimodalChat = () => {
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        onFocus={() => setIsInputFocused(true)}
+        onFocus={() => {
+          setIsInputFocused(true);
+          if (typeof window !== "undefined" && window.scrollY !== 0) {
+            window.scrollTo(0, 0);
+          }
+        }}
         onBlur={() => setIsInputFocused(false)}
         disabled={isLoading}
         placeholder={displayPlaceholder}
@@ -791,7 +796,7 @@ export const OmnimodalChat = () => {
           </div>
         ) : messages.length === 0 ? (
           /* Empty Chat State: Elevated slightly for optimal optical centering */
-          <div className="flex-1 flex flex-col items-center justify-center min-h-0 w-full pb-10 sm:pb-16">
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0 w-full px-2 sm:px-4 py-2 sm:pb-16 overflow-y-auto sm:overflow-visible">
             <OmnimodalEmpty userName={userName}>
               {renderInputForm(true)}
             </OmnimodalEmpty>

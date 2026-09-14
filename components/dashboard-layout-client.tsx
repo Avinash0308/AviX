@@ -56,13 +56,20 @@ export const DashboardLayoutClient = ({
       );
     };
 
-    window.addEventListener("scroll", handleGlobalScroll, {
+    const handleWindowScroll = () => {
+      handleGlobalScroll();
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+
+    window.addEventListener("scroll", handleWindowScroll, {
       passive: true,
       capture: true,
     });
 
     return () => {
-      window.removeEventListener("scroll", handleGlobalScroll, {
+      window.removeEventListener("scroll", handleWindowScroll, {
         capture: true,
       });
       clearTimeout(scrollTimer);
@@ -84,7 +91,7 @@ export const DashboardLayoutClient = ({
   const currentSidebarWidth = isCollapsed ? COLLAPSED_WIDTH : sidebarWidth;
 
   return (
-    <div className="h-full relative overflow-hidden bg-background">
+    <div className="fixed inset-0 h-[100dvh] w-full overflow-hidden bg-background">
       {/* 1. Desktop Adjustable & Collapsible Sidebar */}
       <aside
         style={{ width: `${currentSidebarWidth}px` }}
@@ -143,7 +150,7 @@ export const DashboardLayoutClient = ({
                 useChatSyncStore.getState().triggerNewChat();
                 if (typeof window !== "undefined") {
                   const chatInput = document.getElementById("chat-input") as HTMLTextAreaElement | null;
-                  chatInput?.focus();
+                  chatInput?.focus({ preventScroll: true });
                 }
               }}
               className="p-1.5 rounded-lg border border-border/60 bg-secondary/50 hover:bg-secondary text-foreground transition-all cursor-pointer"

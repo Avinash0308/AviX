@@ -117,7 +117,7 @@ export const Sidebar = ({
     useChatSyncStore.getState().triggerNewChat();
     if (typeof window !== "undefined") {
       const chatInput = document.getElementById("chat-input") as HTMLTextAreaElement | null;
-      chatInput?.focus();
+      chatInput?.focus({ preventScroll: true });
       if (window.innerWidth < 768 && onToggleCollapse) {
         onToggleCollapse();
       }

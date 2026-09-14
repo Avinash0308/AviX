@@ -9,7 +9,7 @@ interface OmnimodalEmptyProps {
 
 export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center px-4 py-8 animate-in fade-in duration-500 overflow-visible">
+    <div className="relative w-full h-full flex flex-col items-center justify-center px-3 sm:px-4 py-2 sm:py-8 my-auto animate-in fade-in duration-500 overflow-visible">
       {/* ========================================================================= */}
       {/* Bilateral Ambient Aurora: Dense at text box ends, soft & gentle in middle */}
       {/* ========================================================================= */}
@@ -45,13 +45,13 @@ export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
       </div>
 
       {/* Brand Logo Badge with Radiant Colored Glow for Light & Dark Mode */}
-      <div className="relative mb-6 sm:mb-8 z-10 -translate-y-2">
+      <div className="relative mb-3 sm:mb-8 z-10 sm:-translate-y-2 shrink-0">
         {/* Outer Radiant Glow Aura (Pure colored gradient emission, zero dark/black shadow) */}
-        <div className="absolute -inset-2.5 rounded-3xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 opacity-60 dark:opacity-75 blur-xl -z-10 animate-pulse" />
+        <div className="absolute -inset-2 sm:-inset-2.5 rounded-3xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 opacity-60 dark:opacity-75 blur-xl -z-10 animate-pulse" />
         <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-500 to-pink-500 opacity-40 dark:opacity-50 blur-md -z-10" />
 
         {/* Vibrant Gradient Badge with Luminous Color Ring */}
-        <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 flex items-center justify-center p-3 sm:p-3.5 shadow-[0_0_20px_rgba(168,85,247,0.35)] dark:shadow-[0_0_25px_rgba(168,85,247,0.5)]">
+        <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-pink-500 flex items-center justify-center p-2.5 sm:p-3.5 shadow-[0_0_20px_rgba(168,85,247,0.35)] dark:shadow-[0_0_25px_rgba(168,85,247,0.5)]">
           <div className="relative w-full h-full">
             <Image
               src="/logo.png"
@@ -65,7 +65,7 @@ export const OmnimodalEmpty = ({ userName, children }: OmnimodalEmptyProps) => {
       </div>
 
       {/* Refined Sizing Greeting Headline */}
-      <h1 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground text-center mb-6 sm:mb-8 leading-snug select-none">
+      <h1 className="relative z-10 text-base sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground text-center mb-4 sm:mb-8 px-2 leading-snug select-none">
         {userName ? `Hi ${userName}, how can I help you today?` : "Hi there, how can I help you today?"}
       </h1>
 

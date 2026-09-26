@@ -28,7 +28,8 @@ export const CustomSignUp = () => {
         baseTheme: isDark ? dark : undefined,
         layout: {
           socialButtonsPlacement: "top",
-          logoPlacement: "none",
+          logoPlacement: "inside",
+          logoImageUrl: "/logo.png",
         },
         variables: {
           colorPrimary: "#8B5CF6",

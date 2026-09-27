@@ -2,7 +2,7 @@
 AviX (Genius.ai) is a state-of-the-art Omnimodal SaaS (Software as a Service) platform developed uniting five generative AI tools into a single, seamless workspace.
 AviX can be used as a daily creative and technical powerhouse that elevates productivity with conversational reasoning, full-stack code generation, hyper-realistic image synthesis, studio-quality music composition, and cinematic video rendering.
 
-**Project Demo Link:** https://youtu.be/oM1PlYCPZS8
+**Project Demo Link:** https://youtu.be/ON_kFAMK6ao
 
 **Project Link:** https://avixgenius.vercel.app/
 
